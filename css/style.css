@@ -223,10 +223,23 @@ main {
     border: 1px solid var(--border-color);
 }
 
+/* Filter Toggle Button - Hidden by default (PC) */
 .filter-toggle-btn {
     display: none;
 }
 
+/* PC: Ensure Filter is Always Visible */
+@media (min-width: 769px) {
+    .filter-section {
+        display: block !important;
+    }
+
+    .filter-toggle-btn {
+        display: none !important;
+    }
+}
+
+/* Mobile: Toggle Logic */
 @media (max-width: 768px) {
     .filter-section {
         display: none;
