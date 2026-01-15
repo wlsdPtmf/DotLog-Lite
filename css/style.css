@@ -450,13 +450,57 @@ main {
 }
 
 @media (max-width: 768px) {
-    .nav-list {
-        display: none;
-        /* simple hide for now, would prefer mobile menu but time constraints */
-    }
-
     .header-container {
         justify-content: center;
+        /* 로고를 중앙에 배치 */
+        position: relative;
+        /* 햄버거 버튼의 절대 위치 기준점 */
+    }
+
+    .mobile-menu-btn {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 30px;
+        height: 21px;
+
+        /* 버튼을 오른쪽 끝으로 고정 */
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .mobile-menu-btn span {
+        display: block;
+        height: 3px;
+        width: 100%;
+        background-color: var(--text-color);
+        border-radius: 3px;
+    }
+
+    .nav-list {
+        display: none;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background-color: var(--white);
+        flex-direction: column;
+        padding: 20px;
+        gap: 10px;
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: var(--shadow-md);
+        z-index: 101;
+    }
+
+    .nav-list.active {
+        display: flex;
+    }
+
+    .nav-list a {
+        display: block;
+        text-align: center;
     }
 
     .hero h2 {
