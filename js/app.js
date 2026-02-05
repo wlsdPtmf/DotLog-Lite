@@ -1,8 +1,30 @@
 const app = {
+    favorites: [],
+
     init: function () {
+        // Load favorites
+        const saved = localStorage.getItem('dotlog_favorites');
+        if (saved) {
+            this.favorites = JSON.parse(saved);
+        }
+
         this.cacheDOM();
         this.bindEvents();
         this.router.init();
+    },
+
+    toggleFavorite: function (id) {
+        const idx = this.favorites.indexOf(id);
+        if (idx === -1) {
+            this.favorites.push(id);
+        } else {
+            this.favorites.splice(idx, 1);
+        }
+        localStorage.setItem('dotlog_favorites', JSON.stringify(this.favorites));
+
+        // Update UI
+        app.render.renderFavorites();
+        app.render.updateFavoriteBtn(id);
     },
 
     cacheDOM: function () {
@@ -144,6 +166,14 @@ const app = {
 
             app.mainContent.innerHTML = `
                 <div class="section-title">비즈 도감</div>
+                
+                <!-- Favorites Section -->
+                <div id="favorites-section" style="display: none; margin-bottom: 40px;">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 16px; color: var(--primary-color);">❤️ 내가 즐겨찾는 비즈</h3>
+                    <div id="favorites-list" class="bead-grid"></div>
+                    <hr style="margin-top: 30px; border: 0; border-top: 1px solid var(--border-color);">
+                </div>
+
                 <div class="search-container">
                     <div class="search-bar">
                         <input type="text" class="search-input" id="search-input" 
@@ -180,6 +210,7 @@ const app = {
             `;
 
             this.applyFilters();
+            this.renderFavorites(); // Initial render of favorites
             this.attachFilterEvents(); // Call the new function here
         },
 
@@ -243,14 +274,57 @@ const app = {
                 return;
             }
 
-            listEl.innerHTML = beads.map(bead => `
+            listEl.innerHTML = beads.map(bead => {
+                const isFav = app.favorites.includes(bead.id);
+                return `
                 <div class="card bead-card" onclick="app.openModal(${bead.id})" style="cursor: pointer;">
+                    <button class="fav-btn ${isFav ? 'active' : ''}" onclick="event.stopPropagation(); app.toggleFavorite(${bead.id})">♥</button>
+                    <div class="color-box" style="background-color: ${bead.hex};"></div>
+                    <div class="bead-code">${bead.dmcNumber}</div>
+                    <div class="bead-name">${bead.nameKr}</div>
+                    <div class="bead-name" style="font-size:0.8rem; color:#999;">${bead.nameEn}</div>
+                </div>
+            `}).join('');
+        },
+
+        renderFavorites: function () {
+            const section = document.getElementById('favorites-section');
+            const list = document.getElementById('favorites-list');
+            if (!section || !list) return;
+
+            if (app.favorites.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+
+            section.style.display = 'block';
+
+            // Filter Data.beads for favorites
+            const favBeads = Data.beads.filter(b => app.favorites.includes(b.id));
+
+            list.innerHTML = favBeads.map(bead => `
+                <div class="card bead-card" onclick="app.openModal(${bead.id})" style="cursor: pointer;">
+                    <button class="fav-btn active" onclick="event.stopPropagation(); app.toggleFavorite(${bead.id})">♥</button>
                     <div class="color-box" style="background-color: ${bead.hex};"></div>
                     <div class="bead-code">${bead.dmcNumber}</div>
                     <div class="bead-name">${bead.nameKr}</div>
                     <div class="bead-name" style="font-size:0.8rem; color:#999;">${bead.nameEn}</div>
                 </div>
             `).join('');
+        },
+
+        updateFavoriteBtn: function (id) {
+            // Find all buttons for this ID (in main list and potentially others)
+            // Since we re-render favorites completely, we mainly need to update the main list button state
+            // actually re-rendering just the button class is hard without traversing DOM.
+            // But we know the ID.
+
+            // Re-render only if needed? No, let's just use DOM manipulation for performance
+            // Find buttons inside bead-cards that trigger this ID? 
+            // We can't easily select by ID unless we put ID on the card.
+            // Let's simpler approach: Re-apply filters (re-renders main list) is safest but slow?
+            // "applyFilters" is fast enough for 500 items. 
+            this.applyFilters();
         },
 
         openModal: function (id) {
