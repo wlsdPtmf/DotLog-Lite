@@ -80,8 +80,11 @@ const app = {
                 case 'dictionary':
                     this.dictionary();
                     break;
-                case 'gallery':
-                    this.gallery();
+                case 'faq':
+                    this.faq();
+                    break;
+                case 'shop':
+                    this.shop();
                     break;
                 case 'guide':
                     this.guide();
@@ -106,9 +109,13 @@ const app = {
                         <h3>🎨 비즈 도감</h3>
                         <p>DMC 번호로<br>정확한 색상을 확인하세요</p>
                     </div>
-                    <div class="card menu-card" onclick="app.router.navigate('gallery')">
-                        <h3>🖼️ 완성 도안</h3>
-                        <p>다양한 작품의<br>정보와 난이도를 참고하세요</p>
+                    <div class="card menu-card" onclick="app.router.navigate('faq')">
+                        <h3>❓ FAQ</h3>
+                        <p>자주 묻는 질문을<br>확인해보세요</p>
+                    </div>
+                    <div class="card menu-card" onclick="app.router.navigate('shop')">
+                        <h3>🛒 추천 쇼핑몰</h3>
+                        <p>믿을 수 있는<br>구매처 리스트</p>
                     </div>
                     <div class="card menu-card" onclick="app.router.navigate('guide')">
                         <h3>📘 초보자 가이드</h3>
@@ -166,6 +173,9 @@ const app = {
 
                     <div class="result-count" id="result-count"></div>
                     <div id="bead-list" class="bead-grid"></div>
+                    <p style="margin-top: 30px; font-size: 0.8rem; color: #9ca3af; text-align: center;">
+                        * 본 도감은 DMC 표준 번호를 기준으로 제작되었습니다. 제조사나 모니터 설정에 따라 실제 색상과 차이가 있을 수 있습니다.
+                    </p>
                 </div>
             `;
 
@@ -234,7 +244,7 @@ const app = {
             }
 
             listEl.innerHTML = beads.map(bead => `
-                <div class="card bead-card">
+                <div class="card bead-card" onclick="app.openModal(${bead.id})" style="cursor: pointer;">
                     <div class="color-box" style="background-color: ${bead.hex};"></div>
                     <div class="bead-code">${bead.dmcNumber}</div>
                     <div class="bead-name">${bead.nameKr}</div>
@@ -243,78 +253,98 @@ const app = {
             `).join('');
         },
 
+        openModal: function (id) {
+            const bead = Data.beads.find(b => b.id === id);
+            if (!bead) return;
+
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <div class="modal-bead-info">
+                    <div class="modal-color-box" style="background-color: ${bead.hex}"></div>
+                    <h2 style="font-size: 2rem; margin-bottom: 5px; color: var(--primary-color);">${bead.dmcNumber}</h2>
+                    <h3 style="font-size: 1.2rem; margin-bottom: 20px; color: var(--text-color);">${bead.nameKr} / ${bead.nameEn}</h3>
+                    
+                    <div style="text-align: left; background: #f9fafb; padding: 20px; border-radius: 12px;">
+                        <div class="modal-detail-row">
+                            <span class="modal-label">색상 계열</span>
+                            <span class="modal-value">${bead.group} (${bead.tone})</span>
+                        </div>
+                        <div class="modal-detail-row">
+                            <span class="modal-label">HEX 코드</span>
+                            <span class="modal-value">${bead.hex}</span>
+                        </div>
+                        <div class="modal-detail-row">
+                            <span class="modal-label">권장 도안 사이즈</span>
+                            <span class="modal-value" style="color: var(--primary-color);">${bead.recommendedSize}</span>
+                        </div>
+                        <div class="modal-detail-row">
+                            <span class="modal-label">사용 가능 타입</span>
+                            <span class="modal-value">${bead.availableType}</span>
+                        </div>
+                    </div>
+                    <p style="margin-top: 20px; font-size: 0.9rem; color: var(--text-light);">
+                        * 모니터 설정에 따라 실제 색상과 다를 수 있습니다.
+                    </p>
+                </div>
+            `;
+
+            const modal = document.getElementById('bead-modal');
+            modal.classList.add('open');
+        },
+
+        closeModal: function () {
+            const modal = document.getElementById('bead-modal');
+            if (modal) modal.classList.remove('open');
+        },
+
         handleSearch: function (query) {
             if (!this.filterState) this.filterState = { query: '', group: 'all', tone: 'all' };
             this.filterState.query = query;
             this.applyFilters();
         },
 
-        gallery: function () {
+        faq: function () {
             app.mainContent.innerHTML = `
-                <div class="section-title">완성 도안 참고 갤러리</div>
-                <div class="gallery-grid">
-                    ${Data.patterns.map(pattern => `
-                        <div class="card pattern-card">
-                            <div style="width:100%; height:150px; background-color: #f1f5f9; border-radius: 8px; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
-                                <span style="font-size: 3rem;">🖼️</span>
+                <div class="section-title">자주 묻는 질문 (FAQ)</div>
+                <div class="guide-container" style="max-width: 800px; margin: 0 auto;">
+                    ${Data.faqs.map((item, index) => `
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                                <span>Q. ${item.q}</span>
+                                <span class="faq-toggle-icon">▼</span>
                             </div>
-                            <h3>${pattern.name}</h3>
-                            <div class="pattern-info">
-                                <span style="margin-right: 10px;">${pattern.brand}</span> • 
-                                <span style="margin: 0 10px;">${pattern.size}</span>
+                            <div class="faq-answer">
+                                <p>A. ${item.a}</p>
                             </div>
-                            <div class="pattern-tags">
-                                <span class="tag">${pattern.difficulty}</span>
-                            </div>
-                            <p style="font-size: 0.9rem; margin-bottom: 16px; color: #4b5563;">${pattern.description}</p>
-                            <button class="btn-outline" onclick="app.router.navigate('pattern/${pattern.id}')">상세 & 필요 비즈 보기</button>
                         </div>
                     `).join('')}
                 </div>
             `;
         },
 
-        patternDetail: function (id) {
-            const pattern = Data.patterns.find(p => p.id === id);
-            if (!pattern) return this.gallery();
-
-            // Find bead details for this pattern
-            const requiredBeadDetails = pattern.requiredBeads.map(rb => {
-                const beadInfo = Data.beads.find(b => b.dmcNumber === rb.code);
-                return { ...rb, ...beadInfo };
-            });
-
+        shop: function () {
             app.mainContent.innerHTML = `
-                <div style="margin-bottom: 20px;">
-                    <button class="btn-outline" onclick="app.router.navigate('gallery')">← 목록으로 돌아가기</button>
-                </div>
-                <div class="card" style="margin-bottom: 30px;">
-                    <div style="display: flex; gap: 30px; flex-wrap: wrap;">
-                        <div style="flex: 1; min-width: 250px; background-color: #f1f5f9; border-radius: 12px; height: 300px; display: flex; align-items: center; justify-content: center;">
-                            <span style="font-size: 4rem;">🖼️</span>
-                        </div>
-                        <div style="flex: 2;">
-                            <h2 style="font-size: 2rem; margin-bottom: 10px; color: var(--primary-color);">${pattern.name}</h2>
-                            <div class="pattern-tags" style="margin-bottom: 20px;">
-                                <span class="tag" style="font-size: 1rem; padding: 6px 14px;">${pattern.difficulty}</span>
-                                <span class="tag" style="background: #e5e7eb; color: #374151; font-size: 1rem; padding: 6px 14px;">${pattern.brand}</span>
-                                <span class="tag" style="background: #e5e7eb; color: #374151; font-size: 1rem; padding: 6px 14px;">${pattern.size}</span>
+                <div class="section-title">추천 쇼핑몰 리스트</div>
+                <div class="container" style="max-width: 1000px;">
+                    <div class="shop-grid">
+                        ${Data.shops.map(shop => `
+                            <div class="shop-category-card">
+                                <div class="shop-category-title">${shop.category}</div>
+                                <ul class="shop-list">
+                                    ${shop.items.map(item => `
+                                        <li class="shop-item">
+                                            <span>${item.name}</span>
+                                            <a href="${item.url}" target="_blank" class="shop-btn">방문하기</a>
+                                        </li>
+                                    `).join('')}
+                                </ul>
                             </div>
-                            <p style="font-size: 1.1rem; line-height: 1.8; color: #4b5563;">${pattern.description}</p>
-                        </div>
+                        `).join('')}
                     </div>
-                </div>
-
-                <div class="section-title" style="font-size: 1.5rem; text-align: left;">필요 비즈 목록</div>
-                <div class="bead-grid">
-                    ${requiredBeadDetails.map(bead => `
-                        <div class="card bead-card">
-                            <div class="color-box" style="background-color: ${bead.hex || '#ccc'};"></div>
-                            <div class="bead-code">${bead.dmcNumber || bead.code}</div>
-                            <div class="bead-name">${bead.nameKr || 'Unknown'}</div>
-                            <div style="margin-top: 8px; font-weight: bold; color: var(--primary-color);">${bead.count}개</div>
-                        </div>
-                    `).join('')}
+                    <div class="shop-disclaimer">
+                        ⚠️ 본 리스트는 정보 제공 목적이며, 구매 결과에 대해 닷로그 라이트는 책임을 지지 않습니다.
+                        <br>구매 전 반드시 리뷰와 판매자 정보를 확인하세요.
+                    </div>
                 </div>
             `;
         },
@@ -362,5 +392,19 @@ const app = {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
+    // Expose render methods to global app object for onclick handlers
+    app.openModal = app.render.openModal;
+    app.closeModal = app.render.closeModal;
+
+    // Modal Close on Overlay Click
+    const modalOverlay = document.getElementById('bead-modal');
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                app.closeModal();
+            }
+        });
+    }
+
     app.init();
 });
