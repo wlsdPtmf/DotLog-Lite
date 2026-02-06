@@ -90,6 +90,7 @@ const Data = {
     shops: [
         {
             category: "국내 전문 브랜드 및 상점",
+            type: "simple",
             items: [
                 { name: "킹드몬드", url: "https://kingdemond.com/" },
                 { name: "퀸즈아뜰리에", url: "https://queensatelier.com/" },
@@ -98,6 +99,7 @@ const Data = {
         },
         {
             category: "해외 프리미엄 브랜드",
+            type: "simple",
             items: [
                 { name: `다이아몬드 아트 클럽<br><span style="font-size: 0.85em; color: #9ca3af;">Diamond Art Club (DAC)</span>`, url: "https://www.diamondartclub.com/" },
                 { name: `오랄로아<br><span style="font-size: 0.85em; color: #9ca3af;">Oraloa</span>`, url: "https://www.oraloa.com/" },
@@ -106,11 +108,27 @@ const Data = {
         },
         {
             category: "가성비 직구 (오픈마켓)",
+            type: "expandable",
             items: [
-                { name: "알리익스프레스", url: "https://www.aliexpress.com/" },
-                { name: "테무 (Temu)", url: "https://www.temu.com/" },
-                { name: "아마존 (Amazon)", url: "https://www.amazon.com/" }
+                {
+                    id: "temu",
+                    name: "테무 (Temu)",
+                    officialUrl: "https://www.temu.com/",
+                    shops: [
+                        { name: "TUOYU DP", desc: "테무 판매 3년 차! 캐릭터 도안 퀄리티가 가장 안정적인 상점. 비즈가 레진입니다.", url: "https://www.temu.com/", tag: "pattern" },
+                        { name: "wowo art", desc: "흔하지 않은 감성 도안이 많아요. 도안이 이쁜게 많아요 추천합니다. 비즈가 레진입니다.", url: "https://www.temu.com/", tag: "pattern" },
+                        { name: "cateared", desc: "트라브릭스 트레이가 있는 곳입니다. 장바구니에 담았다가 할인할 때 구매하세요!", url: "https://www.temu.com/", tag: "tool" },
+                        { name: "AZQSD", desc: "가성비 끝판왕! 비즈 보관함 저렴하게 구매할 수 있습니다!", url: "https://www.temu.com/", tag: "tool" }
+                    ]
+                },
+                {
+                    id: "ali",
+                    name: "알리익스프레스 (AliExpress)",
+                    officialUrl: "https://www.aliexpress.com/",
+                    shops: []
+                }
             ]
         }
     ]
+
 };

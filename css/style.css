@@ -789,3 +789,267 @@ main {
     color: var(--text-color);
     font-weight: 700;
 }
+
+/* Expandable Shop Card Styles */
+.shop-expand-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    margin-bottom: 24px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.shop-expand-header {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+}
+
+.shop-expand-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.shop-expand-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.shop-expand-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.shop-official-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.shop-official-btn:hover {
+    background-color: #4f46e5;
+}
+
+.shop-toggle-area {
+    padding: 10px 20px;
+    background-color: #f9fafb;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.shop-toggle-area:hover {
+    background-color: #f3f4f6;
+}
+
+.shop-sublist {
+    display: none;
+    background-color: var(--white);
+    padding: 0;
+    list-style: none;
+}
+
+.shop-sublist.open {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+.shop-subitem {
+    padding: 20px;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: background-color 0.1s;
+}
+
+.shop-subitem:hover {
+    background-color: #fafafa;
+}
+
+.shop-subitem:last-child {
+    border-bottom: none;
+}
+
+.shop-sub-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.shop-sub-name-wrap {
+    display: flex;
+    flex-direction: column;
+}
+
+.shop-sub-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-color);
+    margin-bottom: 4px;
+}
+
+.shop-sub-desc {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    line-height: 1.4;
+}
+
+.shop-sub-btn {
+    width: 86px;
+    padding: 6px 0;
+    text-align: center;
+    flex-shrink: 0;
+    white-space: nowrap;
+    display: inline-block;
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: none;
+}
+
+.shop-sub-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Admin Styles */
+.admin-controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.admin-btn {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+}
+
+.admin-btn.edit {
+    color: #2563eb;
+    border-color: #bfdbfe;
+}
+
+.admin-btn.delete {
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+.admin-btn.add {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 2px dashed #e5e7eb;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.admin-btn.add:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.admin-toggle-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--text-color);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    z-index: 1000;
+    opacity: 0.3;
+    transition: opacity 0.3s;
+}
+
+.admin-toggle-btn:hover {
+    opacity: 1;
+}
+
+/* Override existing shop list alignment if needed */
+.shop-subitem .shop-sub-header {
+    align-items: center;
+}
+
+/* Legal Notice & Badges */
+.legal-notice {
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    /* Light Gray */
+    line-height: 1.4;
+    text-align: center;
+}
+
+.shop-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    margin-right: 8px;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.badge-official {
+    background-color: #e0e7ff;
+    /* Primary Light */
+}
+
+.badge-pattern {
+    background-color: #d1fae5;
+    /* Pastel Greenish/Mint */
+}
+
+.badge-tool {
+    background-color: #ede9fe;
+    /* Light Purple */
+}
+
+/* Ensure grid items align properly */
+.shop-grid {
+    align-items: start;
+    /* Prevent items from stretching to match height */
+}

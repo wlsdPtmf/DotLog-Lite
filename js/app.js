@@ -1,5 +1,7 @@
 const app = {
     favorites: [],
+    isAdmin: false,
+
 
     init: function () {
         // Load favorites
@@ -25,6 +27,82 @@ const app = {
         // Update UI
         app.render.renderFavorites();
         app.render.updateFavoriteBtn(id);
+    },
+
+    // Admin & Shop Functions
+    toggleAdmin: function () {
+        this.isAdmin = !this.isAdmin;
+        if (this.isAdmin) alert("관리자 모드가 활성화되었습니다. \n상점 리스트를 수정할 수 있습니다.");
+        this.render.page('shop');
+    },
+
+    toggleShopList: function (id, btn) {
+        const list = document.getElementById(id);
+        if (list) {
+            list.classList.toggle('open');
+            if (list.classList.contains('open')) {
+                btn.innerHTML = '🔼 상세 상점 리스트 접기';
+            } else {
+                btn.innerHTML = '🔽 상세 상점 리스트 펼치기';
+            }
+        }
+    },
+
+    addShopItem: function (catIdx, itemIdx) {
+        const typeInput = prompt("카테고리를 선택하세요:\n1: 도안 (🎨)\n2: 도구 (✒️)", "1");
+        if (!typeInput) return;
+
+        let tag = 'pattern';
+        if (typeInput === '2') tag = 'tool';
+
+        const name = prompt("상점 이름을 입력하세요:");
+        if (!name) return;
+        const desc = prompt("한 줄 설명을 입력하세요:", "");
+        const url = prompt("제휴 URL을 입력하세요:", "https://");
+
+        if (name && url) {
+            Data.shops[catIdx].items[itemIdx].shops.push({ name, desc, url, tag });
+            this.render.page('shop');
+        }
+    },
+
+    editShopItem: function (catIdx, itemIdx, subIdx) {
+        const target = Data.shops[catIdx].items[itemIdx].shops[subIdx];
+
+        const typeInput = prompt(`카테고리 수정:\n1: 도안 (🎨)\n2: 도구 (✒️)`, target.tag === 'tool' ? '2' : '1');
+        let tag = target.tag;
+        if (typeInput === '1') tag = 'pattern';
+        if (typeInput === '2') tag = 'tool';
+
+        const name = prompt("상점 이름 수정:", target.name);
+        if (name === null) return;
+        const desc = prompt("설명 수정:", target.desc);
+        const url = prompt("URL 수정:", target.url);
+
+        if (name && url) {
+            target.name = name;
+            target.desc = desc;
+            target.url = url;
+            target.tag = tag;
+            this.render.page('shop');
+        }
+    },
+
+    deleteShopItem: function (catIdx, itemIdx, subIdx) {
+        if (confirm("정말로 이 상점을 삭제하시겠습니까?")) {
+            Data.shops[catIdx].items[itemIdx].shops.splice(subIdx, 1);
+            this.render.page('shop');
+        }
+    },
+
+    exportShopData: function () {
+        const dataStr = JSON.stringify(Data.shops, null, 4);
+        console.log(dataStr);
+        navigator.clipboard.writeText(dataStr).then(() => {
+            alert("상점 데이터(JSON)가 클립보드에 복사되었습니다. \njs/data.js 파일의 shops 배열을 이 내용으로 교체하세요.");
+        }).catch(err => {
+            alert("복사 실패. 콘솔(F12)을 확인하세요.");
+        });
     },
 
     cacheDOM: function () {
@@ -397,11 +475,24 @@ const app = {
         },
 
         shop: function () {
+            const simpleShops = Data.shops.filter(s => s.type !== 'expandable');
+            const expandableShops = Data.shops.filter(s => s.type === 'expandable');
+
             app.mainContent.innerHTML = `
                 <div class="section-title">추천 쇼핑몰 리스트</div>
-                <div class="container" style="max-width: 1000px;">
-                    <div class="shop-grid">
-                        ${Data.shops.map(shop => `
+                <div class="container" style="max-width: 1000px; position: relative;">
+                    <!-- Admin Control -->
+                    <button class="admin-toggle-btn" onclick="app.toggleAdmin()" title="관리자 모드 전환">⚙️</button>
+                    
+                    ${app.isAdmin ? `
+                        <div style="text-align:right; margin-bottom:10px;">
+                            <button onclick="app.exportShopData()" style="padding:8px 16px; background:#1f2937; color:white; border-radius:6px; cursor:pointer;">💾 변경사항 코드 복사(Save)</button>
+                        </div>
+                    ` : ''}
+
+                    <!-- Top Section: 2 Columns for Simple Shops -->
+                    <div class="shop-grid top-section" style="margin-bottom: 40px;">
+                        ${simpleShops.map(shop => `
                             <div class="shop-category-card">
                                 <div class="shop-category-title">${shop.category}</div>
                                 <ul class="shop-list">
@@ -415,9 +506,74 @@ const app = {
                             </div>
                         `).join('')}
                     </div>
+
+                    <!-- Bottom Section: Full Width for Expandable Shops -->
+                    <div class="shop-full-width">
+                         ${expandableShops.map((shop, catIdx) => {
+                const originalCatIdx = Data.shops.indexOf(shop);
+
+                return `
+                                <div class="shop-category-card full-width-card" style="margin-bottom: 24px;">
+                                    <div class="shop-category-title">${shop.category}</div>
+                                    <div class="shop-expand-grid">
+                                        ${shop.items.map((item, itemIdx) => `
+                                            <div class="shop-expand-card">
+                                                <div class="shop-expand-header">
+                                                    <div class="shop-expand-title-group">
+                                                        <div class="shop-expand-name" style="font-size: 1.1rem; font-weight: 700;">🛍️ ${item.name}</div>
+                                                    </div>
+                                                    <a href="${item.officialUrl}" target="_blank" class="shop-official-btn">
+                                                        <span class="shop-badge badge-official">🏠</span> 공식 홈페이지
+                                                    </a>
+                                                </div>
+                                                
+                                                <div class="shop-toggle-area" onclick="app.toggleShopList('list-${item.id}', this)">
+                                                    🔽 상세 상점 리스트 펼치기
+                                                </div>
+                                                <ul id="list-${item.id}" class="shop-sublist">
+                                                    ${item.shops.length > 0 ? item.shops.map((sub, subIdx) => {
+                    const badgeClass = sub.tag === 'tool' ? 'badge-tool' : 'badge-pattern';
+                    const badgeIcon = sub.tag === 'tool' ? '✒️' : '🎨';
+                    return `
+                                                        <li class="shop-subitem">
+                                                            <div class="shop-sub-header">
+                                                                <div class="shop-sub-name-wrap">
+                                                                    <div class="shop-sub-name" style="display: flex; align-items: center;">
+                                                                        <span class="shop-badge ${badgeClass}">${badgeIcon}</span>
+                                                                        ${sub.name}
+                                                                    </div>
+                                                                    <div class="shop-sub-desc">${sub.desc || ''}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div style="display:flex; justify-content: flex-end; gap:8px; align-items:center; margin-top:8px;">
+                                                                <a href="${sub.url}" target="_blank" class="shop-sub-btn">방문하기</a>
+                                                                ${app.isAdmin ? `
+                                                                    <div class="admin-controls">
+                                                                        <button class="admin-btn edit" onclick="app.editShopItem(${originalCatIdx}, ${itemIdx}, ${subIdx})">✏️</button>
+                                                                        <button class="admin-btn delete" onclick="app.deleteShopItem(${originalCatIdx}, ${itemIdx}, ${subIdx})">🗑️</button>
+                                                                    </div>
+                                                                ` : ''}
+                                                            </div>
+                                                        </li>
+                                                    `}).join('') : '<li style="padding:20px; text-align:center; color:#9ca3af;">등록된 상점이 없습니다.</li>'}
+                                                    
+                                                    ${app.isAdmin ? `<button class="admin-btn add" onclick="app.addShopItem(${originalCatIdx}, ${itemIdx})">+ 상점 추가하기</button>` : ''}
+                                                </ul>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                             `;
+            }).join('')}
+                    </div>
+
                     <div class="shop-disclaimer">
                         ⚠️ 본 리스트는 정보 제공 목적이며, 구매 결과에 대해 닷로그 라이트는 책임을 지지 않습니다.
                         <br>구매 전 반드시 리뷰와 판매자 정보를 확인하세요.
+                    </div>
+
+                     <div class="legal-notice">
+                        닷로그 라이트는 쿠팡 파트너스, 알리익스프레스, 테무 제휴 프로그램에 참여하고 있으며, 위 링크를 통해 구매 시 운영자에게 일정액의 수수료가 제공될 수 있습니다. (사용자 구매 가격에는 영향이 없습니다.)
                     </div>
                 </div>
             `;
