@@ -478,6 +478,40 @@ const app = {
             const simpleShops = Data.shops.filter(s => s.type !== 'expandable');
             const expandableShops = Data.shops.filter(s => s.type === 'expandable');
 
+            // Helper to render sub-items (reduces nesting complexity)
+            const renderSubList = (shops, parentCatIdx, parentItemIdx) => {
+                if (!shops || shops.length === 0) {
+                    return '<li style="padding:20px; text-align:center; color:#9ca3af;">등록된 상점이 없습니다.</li>';
+                }
+                return shops.map((sub, subIdx) => {
+                    const badgeClass = (sub.tag === 'tool') ? 'badge-tool' : 'badge-pattern';
+                    const badgeIcon = (sub.tag === 'tool') ? '✒️' : '🎨';
+
+                    return `
+                        <li class="shop-subitem">
+                            <div class="shop-sub-header">
+                                <div class="shop-sub-name-wrap">
+                                    <div class="shop-sub-name" style="display: flex; align-items: center;">
+                                        <span class="shop-badge ${badgeClass}">${badgeIcon}</span>
+                                        ${sub.name}
+                                    </div>
+                                    <div class="shop-sub-desc">${sub.desc || ''}</div>
+                                </div>
+                            </div>
+                            <div style="display:flex; justify-content: flex-end; gap:8px; align-items:center; margin-top:8px;">
+                                <a href="${sub.url}" target="_blank" class="shop-sub-btn">방문하기</a>
+                                ${app.isAdmin ? `
+                                    <div class="admin-controls">
+                                        <button class="admin-btn edit" onclick="app.editShopItem(${parentCatIdx}, ${parentItemIdx}, ${subIdx})">✏️</button>
+                                        <button class="admin-btn delete" onclick="app.deleteShopItem(${parentCatIdx}, ${parentItemIdx}, ${subIdx})">🗑️</button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </li>
+                    `;
+                }).join('');
+            };
+
             app.mainContent.innerHTML = `
                 <div class="section-title">추천 쇼핑몰 리스트</div>
                 <div class="container" style="max-width: 1000px; position: relative;">
@@ -510,6 +544,7 @@ const app = {
                     <!-- Bottom Section: Full Width for Expandable Shops -->
                     <div class="shop-full-width">
                          ${expandableShops.map((shop, catIdx) => {
+                // Correct index recovery
                 const originalCatIdx = Data.shops.indexOf(shop);
 
                 return `
@@ -531,32 +566,7 @@ const app = {
                                                     🔽 상세 상점 리스트 펼치기
                                                 </div>
                                                 <ul id="list-${item.id}" class="shop-sublist">
-                                                    ${item.shops.length > 0 ? item.shops.map((sub, subIdx) => {
-                    const badgeClass = sub.tag === 'tool' ? 'badge-tool' : 'badge-pattern';
-                    const badgeIcon = sub.tag === 'tool' ? '✒️' : '🎨';
-                    return `
-                                                        <li class="shop-subitem">
-                                                            <div class="shop-sub-header">
-                                                                <div class="shop-sub-name-wrap">
-                                                                    <div class="shop-sub-name" style="display: flex; align-items: center;">
-                                                                        <span class="shop-badge ${badgeClass}">${badgeIcon}</span>
-                                                                        ${sub.name}
-                                                                    </div>
-                                                                    <div class="shop-sub-desc">${sub.desc || ''}</div>
-                                                                </div>
-                                                            </div>
-                                                            <div style="display:flex; justify-content: flex-end; gap:8px; align-items:center; margin-top:8px;">
-                                                                <a href="${sub.url}" target="_blank" class="shop-sub-btn">방문하기</a>
-                                                                ${app.isAdmin ? `
-                                                                    <div class="admin-controls">
-                                                                        <button class="admin-btn edit" onclick="app.editShopItem(${originalCatIdx}, ${itemIdx}, ${subIdx})">✏️</button>
-                                                                        <button class="admin-btn delete" onclick="app.deleteShopItem(${originalCatIdx}, ${itemIdx}, ${subIdx})">🗑️</button>
-                                                                    </div>
-                                                                ` : ''}
-                                                            </div>
-                                                        </li>
-                                                    `}).join('') : '<li style="padding:20px; text-align:center; color:#9ca3af;">등록된 상점이 없습니다.</li>'}
-                                                    
+                                                    ${renderSubList(item.shops, originalCatIdx, itemIdx)}
                                                     ${app.isAdmin ? `<button class="admin-btn add" onclick="app.addShopItem(${originalCatIdx}, ${itemIdx})">+ 상점 추가하기</button>` : ''}
                                                 </ul>
                                             </div>
