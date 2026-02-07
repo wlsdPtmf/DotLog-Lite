@@ -167,7 +167,8 @@ const Data = {
             items: [
                 { name: "킹드몬드", url: "https://kingdemond.com/" },
                 { name: "퀸즈아뜰리에", url: "https://queensatelier.com/" },
-                { name: "별밤공방", url: "https://starrynight89.com/" }
+                { name: "별밤공방", url: "https://starrynight89.com/" },
+                { name: `펜도라<br><span style="font-size: 0.85em; color: #9ca3af;">PENDORA</span>`, url: "https://smartstore.naver.com/yun325" }
             ]
         },
         {
@@ -185,7 +186,7 @@ const Data = {
             items: [
                 {
                     id: "temu",
-                    name: "테무 (Temu)",
+                    name: `테무<br><span style="font-size: 0.85em; color: #9ca3af;">Temu</span>`,
                     officialUrl: "https://www.temu.com/",
                     shops: [
                         { name: "TUOYU DP", desc: "테무 판매 3년 차! 캐릭터 도안 퀄리티가 가장 안정적인 상점. 비즈가 레진입니다.", url: "https://www.temu.com/", tag: "pattern" },
@@ -196,8 +197,14 @@ const Data = {
                 },
                 {
                     id: "ali",
-                    name: "알리익스프레스 (AliExpress)",
+                    name: `알리익스프레스<br><span style="font-size: 0.85em; color: #9ca3af;">AliExpress</span>`,
                     officialUrl: "https://www.aliexpress.com/",
+                    shops: []
+                },
+                {
+                    id: "coupang",
+                    name: `쿠팡<br><span style="font-size: 0.85em; color: #9ca3af;">Coupang</span>`,
+                    officialUrl: "https://www.coupang.com/",
                     shops: []
                 }
             ]
