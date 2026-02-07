@@ -332,6 +332,29 @@ const app = {
                 return matchesSearch && matchesGroup && matchesTone;
             });
 
+            // Auto-sort: Special codes first, then numeric ascending
+            filtered.sort((a, b) => {
+                const priority = ['BLANC', 'ECRU', 'B5200'];
+                const cleanA = a.dmcNumber.toString().toUpperCase().trim();
+                const cleanB = b.dmcNumber.toString().toUpperCase().trim();
+
+                const idxA = priority.indexOf(cleanA);
+                const idxB = priority.indexOf(cleanB);
+
+                if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                if (idxA !== -1) return -1;
+                if (idxB !== -1) return 1;
+
+                const valA = parseInt(cleanA, 10);
+                const valB = parseInt(cleanB, 10);
+
+                if (!isNaN(valA) && !isNaN(valB)) {
+                    return valA - valB;
+                }
+
+                return cleanA.localeCompare(cleanB, undefined, { numeric: true });
+            });
+
             this.updateResultCount(filtered.length, Data.beads.length);
             this.renderBeads(filtered);
         },
