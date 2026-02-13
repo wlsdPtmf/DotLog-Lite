@@ -107,7 +107,7 @@ const app = {
 
     cacheDOM: function () {
         this.mainContent = document.getElementById('main-content');
-        this.navLinks = document.querySelectorAll('.nav-list a');
+        this.navLinks = document.querySelectorAll('.nav-list a, .bottom-nav-item');
         this.mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     },
 
@@ -158,7 +158,7 @@ const app = {
     updateNav: function (route) {
         app.navLinks.forEach(link => {
             link.classList.remove('active');
-            if (link.dataset.route === route) {
+            if (link.dataset.route === route || (route === 'faq' && link.dataset.route === 'guide')) {
                 link.classList.add('active');
             }
         });
@@ -613,17 +613,38 @@ const app = {
         },
 
         guide: function () {
+            const guideHTML = Data.guides.map(guide => `
+                <div class="guide-section">
+                    <h3>${guide.title}</h3>
+                    <div class="guide-content">
+                        ${guide.content}
+                    </div>
+                </div>
+            `).join('');
+
+            const faqHTML = Data.faqs.map((item, index) => `
+                <div class="faq-item">
+                    <div class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                        <span>Q. ${item.q}</span>
+                        <span class="faq-toggle-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>A. ${item.a}</p>
+                    </div>
+                </div>
+            `).join('');
+
             app.mainContent.innerHTML = `
                 <div class="section-title">초보자 가이드</div>
                 <div class="guide-container">
-                    ${Data.guides.map(guide => `
-                        <div class="guide-section">
-                            <h3>${guide.title}</h3>
-                            <div class="guide-content">
-                                ${guide.content}
-                            </div>
-                        </div>
-                    `).join('')}
+                    ${guideHTML}
+                </div>
+                
+                <div class="mobile-only-section" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                    <div class="section-title">자주 묻는 질문 (FAQ)</div>
+                    <div class="guide-container">
+                        ${faqHTML}
+                    </div>
                 </div>
             `;
         },
