@@ -381,32 +381,103 @@ main {
     flex-direction: column;
     align-items: center;
     padding: 16px;
+    padding-bottom: 1px;
+    /* space for actions */
     position: relative;
-    /* For absolute positioning of favorite icon */
+    overflow: hidden;
+    /* contain buttons */
+    -webkit-tap-highlight-color: transparent;
+    /* Remove blue box on mobile tap */
 }
 
-.fav-btn {
-    position: absolute;
-    top: 8px;
-    right: 8px;
+/* New Status Filter Chips */
+.status-chip-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 4px;
+    /* scrollbar spacing */
+    scrollbar-width: none;
+    /* Firefox */
+
+    /* PC default: scroll if needed, but usually fits */
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.status-chip-container::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
+}
+
+.filter-chip {
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    background-color: var(--white);
+    border-radius: 50px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-color);
+    flex-shrink: 0;
+
+    /* Remove tap highlight on mobile */
+    -webkit-tap-highlight-color: transparent;
+}
+
+.filter-chip.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
+}
+
+/* Card Status Buttons (Bottom Row) */
+.bead-actions {
+    display: flex;
+    width: 100%;
+    margin-top: 12px;
+    border-top: 1px solid #f3f4f6;
+    padding-top: 8px;
+    margin-bottom: 4px;
+}
+
+.action-btn {
+    flex: 1;
     background: none;
     border: none;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     cursor: pointer;
-    color: #e5e7eb;
-    /* Default gray */
-    transition: transform 0.2s, color 0.2s;
-    z-index: 5;
-    line-height: 1;
+    transition: transform 0.1s;
+    padding: 4px;
+    border-radius: 4px;
+    opacity: 0.5;
+    /* inactive state */
+    filter: grayscale(100%);
+    -webkit-tap-highlight-color: transparent;
 }
 
-.fav-btn:hover {
+.action-btn:hover {
+    background-color: #f9fafb;
     transform: scale(1.1);
 }
 
-.fav-btn.active {
-    color: #ef4444;
-    /* Red for active */
+.action-btn.active {
+    opacity: 1;
+    filter: none;
+}
+
+/* Global: Distinct 'Need Buy' (Cart) when active - Dark Pressed Look */
+.action-btn.active.need {
+    background: none;
+    border: none;
+    box-shadow: none;
+    color: inherit;
+
+    /* Dark, pressed effect using filters */
+    opacity: 1;
+    transform: scale(1.1);
+    filter: grayscale(100%) brightness(0.3) contrast(1.5);
 }
 
 .color-box {
@@ -1079,5 +1150,33 @@ main {
         flex-direction: column;
         align-items: stretch;
         gap: 12px;
+    }
+
+    /* Mobile-Specific Adjustments for Filter Chips */
+    .status-chip-container {
+        /* Fit in one line without scrolling: usage of flex-shrink or smaller text */
+        justify-content: space-between;
+        /* distribute evenly */
+        overflow-x: hidden;
+        /* disable scroll if fitting */
+    }
+
+    .filter-chip {
+        padding: 6px 10px;
+        /* smaller padding */
+        font-size: 0.8rem;
+        /* smaller font */
+        flex: 1;
+        /* distribute width */
+        text-align: center;
+        margin: 0 2px;
+    }
+
+    .filter-chip:first-child {
+        margin-left: 0;
+    }
+
+    .filter-chip:last-child {
+        margin-right: 0;
     }
 }

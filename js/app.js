@@ -1,14 +1,20 @@
 const app = {
     favorites: [],
+    owned: [],
+    needBuy: [],
     isAdmin: false,
 
 
     init: function () {
-        // Load favorites
-        const saved = localStorage.getItem('dotlog_favorites');
-        if (saved) {
-            this.favorites = JSON.parse(saved);
-        }
+        // Load states
+        const savedFav = localStorage.getItem('dotlog_favorites');
+        if (savedFav) this.favorites = JSON.parse(savedFav);
+
+        const savedOwned = localStorage.getItem('dotlog_owned');
+        if (savedOwned) this.owned = JSON.parse(savedOwned);
+
+        const savedNeed = localStorage.getItem('dotlog_need_buy');
+        if (savedNeed) this.needBuy = JSON.parse(savedNeed);
 
         this.cacheDOM();
         this.bindEvents();
@@ -17,16 +23,37 @@ const app = {
 
     toggleFavorite: function (id) {
         const idx = this.favorites.indexOf(id);
-        if (idx === -1) {
-            this.favorites.push(id);
-        } else {
-            this.favorites.splice(idx, 1);
-        }
+        if (idx === -1) this.favorites.push(id);
+        else this.favorites.splice(idx, 1);
         localStorage.setItem('dotlog_favorites', JSON.stringify(this.favorites));
+        this.updateUI(id);
+    },
 
-        // Update UI
-        app.render.renderFavorites();
-        app.render.updateFavoriteBtn(id);
+    toggleOwned: function (id) {
+        const idx = this.owned.indexOf(id);
+        if (idx === -1) this.owned.push(id);
+        else this.owned.splice(idx, 1);
+        localStorage.setItem('dotlog_owned', JSON.stringify(this.owned));
+        this.updateUI(id);
+    },
+
+    toggleNeedBuy: function (id) {
+        const idx = this.needBuy.indexOf(id);
+        if (idx === -1) this.needBuy.push(id);
+        else this.needBuy.splice(idx, 1);
+        localStorage.setItem('dotlog_need_buy', JSON.stringify(this.needBuy));
+        this.updateUI(id);
+    },
+
+    updateUI: function (id) {
+        // Refresh the current view if it's the dictionary
+        if (window.location.hash === '#dictionary' || window.location.hash === '') {
+            // Re-render only the specific card buttons if possible, 
+            // but for simplicity and filter correctness, re-applying filters is safer.
+            // However, to prevent scroll jumping or heavy re-render, we can just toggle classes if we are in 'all' view.
+            // But if we are in a filtered view (e.g. 'Owned'), untoggling might remove it from view.
+            this.render.applyFilters();
+        }
     },
 
     // Admin & Shop Functions
@@ -232,8 +259,21 @@ const app = {
 
         dictionary: function () {
             if (!this.filterState) {
-                this.filterState = { query: '', group: 'all', tone: 'all' };
+                this.filterState = { query: '', status: 'all', group: 'all', tone: 'all' }; // added status
             }
+
+            // Status Filter Chips
+            const statusFilters = [
+                { val: 'all', label: '전체 보기', icon: '' },
+                { val: 'fav', label: '찜 ❤️', icon: '' },
+                { val: 'owned', label: '보유 ✅', icon: '' },
+                { val: 'need', label: '구매필요 🛒', icon: '' }
+            ];
+
+            const renderStatusChip = (s) => {
+                const isActive = (this.filterState.status || 'all') === s.val ? 'active' : '';
+                return `<button class="filter-chip ${isActive}" data-val="${s.val}" onclick="app.render.handleStatusFilter('${s.val}')">${s.label}</button>`;
+            };
 
             const groups = ['Red', 'Orange', 'Yellow', 'Green', 'Blue', 'Purple', 'Brown', 'Gray', 'White'];
             const tones = [
@@ -250,14 +290,12 @@ const app = {
             app.mainContent.innerHTML = `
                 <div class="section-title">비즈 도감</div>
                 
-                <!-- Favorites Section -->
-                <div id="favorites-section" style="display: none; margin-bottom: 40px;">
-                    <h3 style="font-size: 1.2rem; margin-bottom: 16px; color: var(--primary-color);">❤️ 내가 즐겨찾는 비즈</h3>
-                    <div id="favorites-list" class="bead-grid"></div>
-                    <hr style="margin-top: 30px; border: 0; border-top: 1px solid var(--border-color);">
-                </div>
-
                 <div class="search-container">
+                    <!-- Status Filter Chips (Top) -->
+                    <div class="status-chip-container">
+                        ${statusFilters.map(s => renderStatusChip(s)).join('')}
+                    </div>
+
                     <div class="search-bar">
                         <input type="text" class="search-input" id="search-input" 
                             placeholder="비즈 번호(310), 색상명(블랙/Black) 검색..." 
@@ -265,7 +303,7 @@ const app = {
                     </div>
                     
                     <button id="filter-toggle-btn" class="btn-outline filter-toggle-btn">
-                        🛠️ 필터 옵션 열기/닫기
+                        🛠️ 상세 필터 (색상/톤) 열기
                     </button>
 
                     <div class="filter-section" id="filter-section">
@@ -293,8 +331,7 @@ const app = {
             `;
 
             this.applyFilters();
-            this.renderFavorites(); // Initial render of favorites
-            this.attachFilterEvents(); // Call the new function here
+            this.attachFilterEvents();
         },
 
         attachFilterEvents: function () {
@@ -306,6 +343,21 @@ const app = {
                     filterSection.classList.toggle('active');
                 });
             }
+        },
+
+        handleStatusFilter: function (val) {
+            this.filterState.status = val;
+
+            // Update Chip Active State
+            const chips = document.querySelectorAll('.filter-chip');
+            chips.forEach(chip => {
+                // Determine value by text or order? 
+                // Better to add data-val to chips in renderStatusChip
+                if (chip.dataset.val === val) chip.classList.add('active');
+                else chip.classList.remove('active');
+            });
+
+            this.applyFilters();
         },
 
         handleFilter: function (type, val) {
@@ -322,22 +374,30 @@ const app = {
         },
 
         applyFilters: function () {
-            const { query, group, tone } = this.filterState;
+            const { query, group, tone, status } = this.filterState;
             const lowerQ = query.toLowerCase();
 
             const filtered = Data.beads.filter(bead => {
+                // 1. Search Query
                 const matchesSearch = !query ||
                     bead.dmcNumber.toLowerCase().includes(lowerQ) ||
                     bead.nameKr.toLowerCase().includes(lowerQ) ||
                     bead.nameEn.toLowerCase().includes(lowerQ);
 
+                // 2. Group & Tone
                 const matchesGroup = group === 'all' || bead.group === group;
                 const matchesTone = tone === 'all' || bead.tone === tone;
 
-                return matchesSearch && matchesGroup && matchesTone;
+                // 3. Status Filter
+                let matchesStatus = true;
+                if (status === 'fav') matchesStatus = app.favorites.includes(bead.id);
+                else if (status === 'owned') matchesStatus = app.owned.includes(bead.id);
+                else if (status === 'need') matchesStatus = app.needBuy.includes(bead.id);
+
+                return matchesSearch && matchesGroup && matchesTone && matchesStatus;
             });
 
-            // Auto-sort: Special codes first, then numeric ascending
+            // Auto-sort
             filtered.sort((a, b) => {
                 const priority = ['BLANC', 'ECRU', 'B5200'];
                 const cleanA = a.dmcNumber.toString().toUpperCase().trim();
@@ -382,55 +442,32 @@ const app = {
 
             listEl.innerHTML = beads.map(bead => {
                 const isFav = app.favorites.includes(bead.id);
+                const isOwned = app.owned.includes(bead.id);
+                const isNeed = app.needBuy.includes(bead.id);
+
                 return `
                 <div class="card bead-card" onclick="app.openModal(${bead.id})" style="cursor: pointer;">
-                    <button class="fav-btn ${isFav ? 'active' : ''}" onclick="event.stopPropagation(); app.toggleFavorite(${bead.id})">♥</button>
+                    
                     <div class="color-box" style="background-color: ${bead.hex};"></div>
                     <div class="bead-code">${bead.dmcNumber}</div>
                     <div class="bead-name">${bead.nameKr}</div>
-                    <div class="bead-name" style="font-size:0.8rem; color:#999;">${bead.nameEn}</div>
+                    <div class="bead-name" style="font-size:0.8rem; color:#999; margin-bottom: 10px;">${bead.nameEn}</div>
+                    
+                    <!-- Status Buttons 3-Pack -->
+                    <div class="bead-actions" onclick="event.stopPropagation()">
+                        <button class="action-btn ${isFav ? 'active' : ''}" onclick="app.toggleFavorite(${bead.id})" title="찜하기">
+                            ${isFav ? '❤️' : '🤍'}
+                        </button>
+                        <button class="action-btn ${isOwned ? 'active owned' : ''}" onclick="app.toggleOwned(${bead.id})" title="보유중">
+                            ✅
+                        </button>
+                        <button class="action-btn ${isNeed ? 'active need' : ''}" onclick="app.toggleNeedBuy(${bead.id})" title="구매필요">
+                            🛒
+                        </button>
+                    </div>
+
                 </div>
             `}).join('');
-        },
-
-        renderFavorites: function () {
-            const section = document.getElementById('favorites-section');
-            const list = document.getElementById('favorites-list');
-            if (!section || !list) return;
-
-            if (app.favorites.length === 0) {
-                section.style.display = 'none';
-                return;
-            }
-
-            section.style.display = 'block';
-
-            // Filter Data.beads for favorites
-            const favBeads = Data.beads.filter(b => app.favorites.includes(b.id));
-
-            list.innerHTML = favBeads.map(bead => `
-                <div class="card bead-card" onclick="app.openModal(${bead.id})" style="cursor: pointer;">
-                    <button class="fav-btn active" onclick="event.stopPropagation(); app.toggleFavorite(${bead.id})">♥</button>
-                    <div class="color-box" style="background-color: ${bead.hex};"></div>
-                    <div class="bead-code">${bead.dmcNumber}</div>
-                    <div class="bead-name">${bead.nameKr}</div>
-                    <div class="bead-name" style="font-size:0.8rem; color:#999;">${bead.nameEn}</div>
-                </div>
-            `).join('');
-        },
-
-        updateFavoriteBtn: function (id) {
-            // Find all buttons for this ID (in main list and potentially others)
-            // Since we re-render favorites completely, we mainly need to update the main list button state
-            // actually re-rendering just the button class is hard without traversing DOM.
-            // But we know the ID.
-
-            // Re-render only if needed? No, let's just use DOM manipulation for performance
-            // Find buttons inside bead-cards that trigger this ID? 
-            // We can't easily select by ID unless we put ID on the card.
-            // Let's simpler approach: Re-apply filters (re-renders main list) is safest but slow?
-            // "applyFilters" is fast enough for 500 items. 
-            this.applyFilters();
         },
 
         openModal: function (id) {
