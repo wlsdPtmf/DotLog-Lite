@@ -200,8 +200,13 @@ const app = {
         home: function () {
             app.mainContent.innerHTML = `
                 <div class="hero">
-                    <h2>보석십자수의 모든 것</h2>
-                    <p>도안 정보부터 정확한 비즈 색상까지,<br>DotLog Lite에서 쉽고 빠르게 찾아보세요.</p>
+                    <div class="hero-content">
+                        <h2>보석십자수의 모든 것</h2>
+                        <p>도안 정보부터 정확한 비즈 색상까지,<br>DotLog Lite에서 쉽고 빠르게 찾아보세요.</p>
+                    </div>
+                    <div class="hero-image">
+                        <img src="images/hero-cat-beadwork.jpg" alt="고양이 보석십자수 작품" />
+                    </div>
                 </div>
                 <div class="section-title">주요 메뉴</div>
                 <div class="menu-grid">
