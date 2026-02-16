@@ -680,6 +680,12 @@ const app = {
                 <div class="section-title">초보자 가이드</div>
                 <div class="guide-container">
                     ${guideHTML}
+                    
+                    <div style="margin-top: 20px; padding: 15px; background-color: #f3f4f6; border-radius: 8px; font-size: 0.95em; color: var(--text-color);">
+                        💡 <strong>꿀팁:</strong> 가이드에서 소개한 모든 추천 제품과 도구들은 
+                        <span style="color: var(--primary-color); font-weight: 700; cursor: pointer; text-decoration: underline;" onclick="app.router.navigate('shop')">[추천 쇼핑몰]</span> 
+                        메뉴에 깔끔하게 정리해 두었습니다. '방문하기' 버튼을 누르면 바로 구경하실 수 있어요!
+                    </div>
                 </div>
                 
                 <div class="mobile-only-section" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb;">

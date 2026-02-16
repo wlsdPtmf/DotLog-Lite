@@ -107,34 +107,107 @@ const Data = {
     patterns: [],
     guides: [
         {
-            title: "1단계: 준비 (Preparation) - 비즈와 도구",
+            title: "1. 보석십자수 완벽 준비물 (기본 도구 & 추천템)",
             content: `
-                <p><strong>도구 챙기기:</strong> 펜, 고체 풀, 트레이, 핀셋을 준비하세요. <em>퍼티(Putty)</em>를 사용하면 왁스보다 오래 갑니다.</p>
-                <p><strong>비즈 타입 비교:</strong></p>
+                <p>보석십자수를 더 편하고 즐겁게 즐기기 위해 필요한 도구들을 소개합니다.</p>
                 <ul>
-                    <li><strong>원형(Round):</strong> 붙이기 쉽고 작업 속도가 빠르며, 반짝임이 화려합니다. (초보 추천)</li>
-                    <li><strong>사각(Square):</strong> 빈틈없이 꽉 차는 완성도와 딱딱 맞는 손맛이 일품입니다. (중급 이상)</li>
-                </ul>
-                <p><strong>비즈 재질 비교:</strong></p>
-                <ul>
-                    <li><strong>레진(Resin):</strong> 색상이 선명하고 광택이 오래가며 모양이 일정합니다. (고급형)</li>
-                    <li><strong>아크릴(Acrylic):</strong> 가성비가 좋지만 레진에 비해 광택이 덜할 수 있습니다. (보급형)</li>
+                    <li><strong>기본 제공 도구:</strong> 기본 트레이, 고체 풀, 핀셋, 펜 등은 도안을 구매하면 보통 함께 들어있습니다.</li>
+                    <li><strong>건강을 위한 필수 추천템:</strong> 장시간 집중해야 하므로 목과 허리, 눈 건강을 지켜주는 <strong>'라이트 패드'</strong>와 <strong>'독서대'</strong>는 꼭 구매하시는 것을 추천합니다.</li>
+                    <li><strong>작업 효율을 높여주는 꿀템들:</strong>
+                        <ul style="margin-top: 5px; margin-bottom: 5px;">
+                            <li>- <strong>퍼티(Putty):</strong> 기본 고체 풀보다 접착력과 유지력이 훨씬 뛰어납니다.</li>
+                            <li>- <strong>건조기 시트 & 향기 부스터:</strong> 비즈의 정전기가 심할 때, 건조기 시트를 작게 잘라 넣거나 향기 부스터를 몇 알 넣어주면 정전기도 잡고 향기도 좋아집니다.</li>
+                            <li>- <strong>릴리스 페이퍼(이형지) & 종이 호일:</strong> 캔버스의 기본 비닐을 떼어내고 종이를 덮어두면, 칼로 원하는 만큼만 잘라 쓰기 편하고 도안이 손상되지 않아 좋습니다.</li>
+                        </ul>
+                    </li>
                 </ul>
             `
         },
         {
-            title: "2단계: 실전 (Practice) - 핵심 노하우",
+            title: "2. 내게 맞는 보관함 & 트레이 찾기",
             content: `
-                <p><strong>고체 풀 vs 퍼티:</strong> 기본 핑크색 풀은 찌꺼기가 남을 수 있지만, <strong>보석십자수 전용 퍼티</strong>는 끈적임이 덜하고 유지력이 훨씬 깁니다.</p>
-                <p><strong>비즈 집기:</strong> 트레이를 좌우로 살살 흔들어 비즈 골을 맞춘 뒤 가볍게 찍어주세요.</p>
-                <p><strong>붙이기:</strong> 사각 비즈는 각을 맞춰서, 원형 비즈는 중앙에 맞춰서 <em>'톡'</em> 소리나게 붙여주세요.</p>
+                <div class="guide-item-row">
+                    <div class="guide-text">
+                        <ul>
+                            <li><strong>트레이 보관함:</strong> 비즈 보관함과 트레이가 하나로 합쳐진 형태입니다. 비즈를 따로 꺼내서 옮길 필요 없이 바로 사용할 수 있어 가장 적극적으로 추천하는 아이템입니다.</li>
+                        </ul>
+                    </div>
+                    <div class="guide-img-container">
+                        <img class="img-placeholder" src="./images/guide_tray.jpg" alt="트레이 보관함">
+                    </div>
+                </div>
+
+                <div class="guide-item-row">
+                    <div class="guide-text">
+                        <ul>
+                            <li><strong>비즈 보관함:</strong> 작은 통 여러 개에 비즈를 나누어 담는 보관함입니다. 통을 꺼내어 트레이에 덜어 써야 하는 번거로움은 있지만, 좁은 공간에 많은 비즈를 보관하기에 아주 좋습니다.</li>
+                        </ul>
+                    </div>
+                    <div class="guide-img-container">
+                        <img class="img-placeholder" src="./images/guide_box.jpg" alt="비즈 보관함">
+                    </div>
+                </div>
+
+                <div class="guide-item-row">
+                    <div class="guide-text">
+                        <ul>
+                            <li><strong>단품 트레이:</strong> 기본으로 제공되는 트레이는 작고 불편한 경우가 많습니다. 크고 단단하며 보관도 편한 전문 트레이를 따로 구매하시는 것을 추천합니다.</li>
+                        </ul>
+                    </div>
+                    <div class="guide-img-container">
+                        <img class="img-placeholder" src="./images/guide_single.jpg" alt="단품 트레이">
+                    </div>
+                </div>
             `
         },
         {
-            title: "3단계: 마무리 (Finish) - 보관법",
+            title: "3. 비즈와 접착제, 어떤 걸 고를까?",
             content: `
-                <p><strong>눌러주기:</strong> 작업 후 두꺼운 책이나 밀대로 꾹꾹 눌러주면 비즈가 들뜨지 않고 단단히 고정됩니다.</p>
-                <p><strong>보관:</strong> 액자에 넣거나, 돌돌 말 때는 비즈가 바깥쪽을 향하게 말아야 구겨지지 않습니다.</p>
+                <p><strong>비즈 형태 (원형 vs 사각)</strong></p>
+                <div class="guide-item-row">
+                    <div class="guide-text">
+                        <ul>
+                            <li><strong>원형 비즈:</strong> 방향을 맞출 필요가 없어 붙이기 쉽고 작업 속도가 빠릅니다. (초보자 적극 추천)</li>
+                        </ul>
+                    </div>
+                    <div class="guide-img-container">
+                        <img class="img-placeholder" src="./images/guide_round.jpg" alt="원형 비즈">
+                    </div>
+                </div>
+
+                <div class="guide-item-row">
+                    <div class="guide-text">
+                        <ul>
+                            <li><strong>사각 비즈:</strong> 빈틈없이 꽉 차고 딱 들어맞을 때의 소리가 훌륭합니다. 하지만 각도를 정밀하게 맞춰야 해서 조금 어렵습니다. (중급자 이상 추천)</li>
+                        </ul>
+                    </div>
+                    <div class="guide-img-container">
+                        <img class="img-placeholder" src="./images/guide_square.jpg" alt="사각 비즈">
+                    </div>
+                </div>
+
+                <p style="margin-top: 30px;"><strong>비즈 재질 (레진 vs 아크릴)</strong></p>
+                <ul>
+                    <li><strong>레진 (고급형):</strong> 색이 선명하고 광택이 뛰어나며 비즈 모양이 일정합니다.</li>
+                    <li><strong>아크릴 (보급형):</strong> 가성비는 좋으나 레진에 비해 광택이 덜하고 모양이 불규칙할 수 있습니다.</li>
+                    <li style="margin-top: 8px;">💡 <strong>강력 추천:</strong> 레진과 아크릴 중 고민이시라면, 완성작의 퀄리티를 위해 '레진' 비즈를 추천합니다! 도안 구매 시 상세 페이지에서 꼭 '레진 비즈'인지 확인해 보세요.</li>
+                </ul>
+
+                <p style="margin-top: 30px;"><strong>접착제 (고체 풀 vs 퍼티)</strong></p>
+                <ul>
+                    <li><strong>고체 풀:</strong> 기본 제공품이라 따로 살 필요가 없으며, AB비즈(오로라 비즈)나 특수 비즈를 붙일 때 유용합니다.</li>
+                    <li><strong>퍼티:</strong> 클레이 같은 쫀득한 질감으로 접착력과 유지력이 압도적으로 좋습니다. 처음엔 다이소의 '조각 접착제'나 알리, 테무 등에서 저렴한 퍼티로 입문해 보시는 것을 추천합니다.</li>
+                </ul>
+            `
+        },
+        {
+            title: "4. 정성껏 완성한 작품, 보관하는 방법",
+            content: `
+                <ul>
+                    <li><strong>클리어 파일 (A3 사이즈 추천):</strong> 30x40cm 사이즈 도안을 하시는 분들께 가장 추천합니다. 마치 앨범처럼 한 장씩 넘겨보며 완성작을 감상하는 재미가 쏠쏠합니다.</li>
+                    <li><strong>지관통:</strong> 도안을 돌돌 말아 원통에 보관합니다. 구김은 없지만, 작품이 많아지면 부피를 많이 차지하고 가격대도 있어 크게 추천하지는 않습니다.</li>
+                    <li><strong>지퍼백 & 비닐 포장:</strong> 아주 큰 대형 도안이거나 완성작이 너무 많아 공간 차지가 부담스러울 때 추천합니다. 사이즈에 맞는 긴 지퍼백을 활용해 보세요.</li>
+                </ul>
             `
         }
     ],
