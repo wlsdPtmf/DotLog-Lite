@@ -630,13 +630,15 @@ main {
 
 .faq-answer p {
     padding: 20px;
+    padding-bottom: 40px;
+    /* Added padding for better spacing */
     color: var(--text-light);
     line-height: 1.6;
 }
 
 .faq-item.active .faq-answer {
-    max-height: 200px;
-    /* Approximate max height */
+    max-height: 2000px;
+    /* Increased heavily to prevent clipping on mobile */
 }
 
 .footer-promo {
