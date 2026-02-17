@@ -225,6 +225,17 @@ const app = {
         },
 
         home: function () {
+            // 랜덤 꿀팁 배열 (FAQ 기반 요약)
+            const tips = [
+                { q: "헉, 비즈가 모자라요!", a: "당황하지 마세요! 구매처에 <strong>AS(추가 배송)</strong>를 요청하거나, 남는 비슷한 색상으로 슬쩍 대체해도 완성하면 티가 안 납니다." },
+                { q: "비즈 정전기가 너무 심해요!", a: "<strong>건조기 시트</strong> 한 조각을 비즈 통에 쏙 넣어보세요. 마법처럼 정전기가 사라지고, <strong>향기 부스터</strong> 몇 알을 넣으면 향기까지 좋아집니다!" },
+                { q: "완성 후 남은 잉여 비즈, 버려야 하나요?", a: "버리지 마세요! 예쁜 <strong>투명 유리병</strong>에 층층이 모으면 인테리어 소품이 되고, 나중에 비즈가 모자랄 때 요긴하게 쓸 수 있어요." },
+                { q: "접착력이 떨어져서 비즈가 안 붙어요!", a: "<strong>도안 전용 접착제</strong>를 붓으로 살짝 발라주면 다시 끈적해집니다. 급할 땐 얇은 <strong>양면테이프</strong>로 심폐소생술도 가능해요!" },
+                { q: "잘못 붙인 비즈, 어떻게 떼나요?", a: "손톱으로 긁지 마세요! 도구 세트의 <strong>핀셋</strong>으로 비즈 양옆을 살짝 잡고 '톡!' 비틀어 올리면 캔버스 손상 없이 깔끔하게 제거됩니다." },
+                { q: "비즈가 나중에 떨어질까 봐 걱정돼요!", a: "완성 후 <strong>무거운 책</strong>으로 하루 꾹 눌러주고, <strong>전용 코팅제</strong>나 <strong>유광 바니시</strong>를 얇게 발라주면 비즈가 절대 안 떨어져요!" }
+            ];
+            const tip = tips[Math.floor(Math.random() * tips.length)];
+
             app.mainContent.innerHTML = `
                 <div class="hero">
                     <div class="hero-content">
@@ -252,6 +263,14 @@ const app = {
                     <div class="card menu-card" onclick="app.router.navigate('guide')">
                         <h3>📘 초보자 가이드</h3>
                         <p>처음 시작하는<br>당신을 위한 꿀팁</p>
+                    </div>
+                </div>
+
+                <div class="tip-section">
+                    <div class="tip-title">💡 오늘의 꿀팁</div>
+                    <div class="tip-card">
+                        <p><strong>Q. ${tip.q}</strong><br>${tip.a}</p>
+                        <button class="tip-btn" onclick="app.router.navigate('faq')">FAQ에서 더 많은 꿀팁 보기</button>
                     </div>
                 </div>
             `;
