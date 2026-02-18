@@ -77,6 +77,7 @@ const app = {
             }
         });
         this.updateCompareBar();
+        this.saveCompareList();
     },
 
     updateCompareBar: function () {
@@ -101,6 +102,66 @@ const app = {
                 }
             }, 300);
         }
+    },
+
+    saveCompareList: function () {
+        localStorage.setItem('dotlog_compare_list', JSON.stringify(this.compareList));
+    },
+
+    loadCompareList: function () {
+        const stored = localStorage.getItem('dotlog_compare_list');
+        if (stored) {
+            try {
+                this.compareList = JSON.parse(stored);
+                // Update buttons on load if we are on a page where they are visible (e.g. initial load might be home)
+                // But since app.init calls render.page, and render.page might render beads later, 
+                // we should just ensure variables are set. 
+                // Logic to update buttons will be handled by renderBeads checking compareList.
+
+                // However, if we come from a reload on dictionary page, renderBeads runs then this runs? 
+                // Or this runs before render?
+                // app.init calls this.loadCompareList() before this.render.init().
+                // So compareList is ready when renderBeads renders.
+
+                // We also need to show the bar if there are items.
+                if (this.compareList.length > 0) {
+                    this.updateCompareBar();
+                }
+            } catch (e) {
+                console.error("Failed to load compare list", e);
+                this.compareList = [];
+            }
+        }
+    },
+
+    copyCompareList: function () {
+        if (this.compareList.length === 0) {
+            alert("복사할 비즈가 없습니다.");
+            return;
+        }
+
+        const selectedBeads = Data.beads.filter(b => this.compareList.includes(b.id));
+        const text = selectedBeads.map(b => b.dmcNumber).join(', ');
+
+        navigator.clipboard.writeText(text).then(() => {
+            this.showToast("비즈 번호가 복사되었습니다! 📋");
+        }).catch(err => {
+            console.error('클립보드 복사 실패:', err);
+            prompt("클립보드 복사에 실패했습니다. 아래 텍스트를 복사하세요:", text);
+        });
+    },
+
+    showToast: function (message) {
+        const toast = document.getElementById("toast");
+        if (!toast) return;
+
+        toast.textContent = message;
+        toast.className = "show";
+
+        // After 3 seconds, remove the show class
+        setTimeout(function () {
+            toast.className = toast.className.replace("show", "");
+        }, 3000);
     },
 
     hideCompareBar: function () {
@@ -130,9 +191,10 @@ const app = {
             </div>
         `).join('');
 
-        // Add Clear All Footer
+        // Add Footer with Clear All and Copy
         modalBody.innerHTML += `
             <div style="width:100%;" class="compare-footer">
+                <button class="compare-copy-btn" onclick="app.copyCompareList()">📋 리스트 복사</button>
                 <button class="compare-clear-all-btn" onclick="app.resetCompareList()">전체 비우기</button>
             </div>
         `;
@@ -146,6 +208,7 @@ const app = {
 
         // 1. Clear Data
         this.compareList = [];
+        this.saveCompareList();
 
         // 2. Update all buttons in main list
         const allActiveBtns = document.querySelectorAll('.compare-btn.active');
@@ -165,6 +228,7 @@ const app = {
 
         // 1. Remove from Data
         this.compareList.splice(idx, 1);
+        this.saveCompareList();
 
         // 2. Update specific button in main list
         const btns = document.querySelectorAll(`.compare-btn[data-id="${id}"]`);
@@ -920,5 +984,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    app.loadCompareList();
     app.init();
 });
