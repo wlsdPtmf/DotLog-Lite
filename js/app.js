@@ -2,6 +2,7 @@ const app = {
     favorites: [],
     owned: [],
     needBuy: [],
+    compareList: [],
     isAdmin: false,
 
 
@@ -54,6 +55,141 @@ const app = {
             // But if we are in a filtered view (e.g. 'Owned'), untoggling might remove it from view.
             this.render.applyFilters();
         }
+    },
+
+    // Compare Feature
+    toggleCompare: function (id) {
+        const idx = this.compareList.indexOf(id);
+        if (idx === -1) {
+            this.compareList.push(id);
+        } else {
+            this.compareList.splice(idx, 1);
+        }
+        // Toggle button visual state
+        const btns = document.querySelectorAll(`.compare-btn[data-id="${id}"]`);
+        btns.forEach(btn => {
+            if (this.compareList.includes(id)) {
+                btn.classList.add('active');
+                btn.textContent = '✔';
+            } else {
+                btn.classList.remove('active');
+                btn.textContent = '➕';
+            }
+        });
+        this.updateCompareBar();
+    },
+
+    updateCompareBar: function () {
+        const bar = document.getElementById('compare-bar');
+        const countEl = document.getElementById('compare-count');
+        if (!bar || !countEl) return;
+
+        const count = this.compareList.length;
+        countEl.textContent = count;
+
+        if (count > 0) {
+            bar.style.display = 'flex';
+            // Trigger reflow for animation
+            void bar.offsetWidth;
+            bar.classList.add('visible');
+        } else {
+            bar.classList.remove('visible');
+            // Wait for fade-out transition then hide
+            setTimeout(() => {
+                if (!bar.classList.contains('visible')) {
+                    bar.style.display = 'none';
+                }
+            }, 300);
+        }
+    },
+
+    hideCompareBar: function () {
+        const bar = document.getElementById('compare-bar');
+        if (bar) {
+            bar.classList.remove('visible');
+            bar.style.display = 'none';
+        }
+    },
+
+    openCompareModal: function () {
+        if (this.compareList.length === 0) {
+            alert("비교할 비즈를 먼저 선택해주세요.");
+            return;
+        }
+
+        const selectedBeads = Data.beads.filter(b => this.compareList.includes(b.id));
+        const modalBody = document.getElementById('compare-body');
+
+        modalBody.innerHTML = selectedBeads.map(bead => `
+            <div class="compare-card">
+                <button class="compare-remove-btn" onclick="app.removeCompareItem(${bead.id})">×</button>
+                <div class="compare-circle" style="background-color: ${bead.hex};" title="${bead.hex}"></div>
+                <div class="compare-code">${bead.dmcNumber}</div>
+                <div class="compare-name">${bead.nameKr}<br><span style="font-size:0.8em; color:#999;">${bead.nameEn}</span></div>
+                <div class="compare-name" style="margin-top:4px;">${bead.group} / ${bead.tone}</div>
+            </div>
+        `).join('');
+
+        // Add Clear All Footer
+        modalBody.innerHTML += `
+            <div style="width:100%;" class="compare-footer">
+                <button class="compare-clear-all-btn" onclick="app.resetCompareList()">전체 비우기</button>
+            </div>
+        `;
+
+        const modal = document.getElementById('compare-modal');
+        modal.classList.add('open');
+    },
+
+    resetCompareList: function () {
+        if (this.compareList.length === 0) return;
+
+        // 1. Clear Data
+        this.compareList = [];
+
+        // 2. Update all buttons in main list
+        const allActiveBtns = document.querySelectorAll('.compare-btn.active');
+        allActiveBtns.forEach(btn => {
+            btn.classList.remove('active');
+            btn.textContent = '➕';
+        });
+
+        // 3. Update Bar & Modal
+        this.updateCompareBar();
+        this.closeCompareModal();
+    },
+
+    removeCompareItem: function (id) {
+        const idx = this.compareList.indexOf(id);
+        if (idx === -1) return;
+
+        // 1. Remove from Data
+        this.compareList.splice(idx, 1);
+
+        // 2. Update specific button in main list
+        const btns = document.querySelectorAll(`.compare-btn[data-id="${id}"]`);
+        btns.forEach(btn => {
+            btn.classList.remove('active');
+            btn.textContent = '➕';
+        });
+
+        // 3. Update Bar & Modal
+        this.updateCompareBar();
+
+        if (this.compareList.length === 0) {
+            this.closeCompareModal();
+        } else {
+            // Re-render modal if still open
+            const modal = document.getElementById('compare-modal');
+            if (modal.classList.contains('open')) {
+                this.openCompareModal();
+            }
+        }
+    },
+
+    closeCompareModal: function () {
+        const modal = document.getElementById('compare-modal');
+        if (modal) modal.classList.remove('open');
     },
 
     // Admin & Shop Functions
@@ -176,6 +312,10 @@ const app = {
 
         handleRoute: function () {
             const hash = window.location.hash.slice(1) || 'home';
+            // Hide compare bar when leaving dictionary
+            if (hash !== 'dictionary') {
+                app.hideCompareBar();
+            }
             app.render.page(hash);
             app.updateNav(hash);
             window.scrollTo(0, 0);
@@ -351,6 +491,8 @@ const app = {
 
             this.applyFilters();
             this.attachFilterEvents();
+            // Restore compare bar if items were previously selected
+            app.updateCompareBar();
         },
 
         attachFilterEvents: function () {
@@ -484,6 +626,9 @@ const app = {
                             🛒
                         </button>
                     </div>
+
+                    <!-- Compare Button -->
+                    <button class="compare-btn ${app.compareList.includes(bead.id) ? 'active' : ''}" data-id="${bead.id}" onclick="event.stopPropagation(); app.toggleCompare(${bead.id})" title="비교함 담기">${app.compareList.includes(bead.id) ? '✔' : '➕'}</button>
 
                 </div>
             `}).join('');
@@ -754,6 +899,24 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.target === modalOverlay) {
                 app.closeModal();
             }
+        });
+    }
+
+    // Compare Modal Close on Overlay Click
+    const compareModalOverlay = document.getElementById('compare-modal');
+    if (compareModalOverlay) {
+        compareModalOverlay.addEventListener('click', (e) => {
+            if (e.target === compareModalOverlay) {
+                app.closeCompareModal();
+            }
+        });
+    }
+
+    // Compare Button Click Event
+    const compareBtn = document.querySelector('.compare-bar-btn');
+    if (compareBtn) {
+        compareBtn.addEventListener('click', () => {
+            app.openCompareModal();
         });
     }
 
