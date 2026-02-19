@@ -19,16 +19,23 @@ const app = {
 
         this.cacheDOM();
         this.bindEvents();
-        this.router.init();
+        // this.router.init(); // Removed from here to handle conditionally
 
         // Deep Link Check
         const beadCode = this.getBeadCodeFromURL();
         if (beadCode) {
+            // Force Dictionary View (Background)
+            this.render.page('dictionary');
+            this.updateNav('dictionary');
+
             const bead = Data.beads.find(b => b.dmcNumber.toString() === beadCode);
             if (bead) {
                 // Ensure renders happen first if needed, but here we just open modal
                 this.render.openModal(bead.id, false);
             }
+        } else {
+            // Normal Hash Routing
+            this.router.init();
         }
     },
 
