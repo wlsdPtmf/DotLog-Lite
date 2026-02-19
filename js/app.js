@@ -19,19 +19,39 @@ const app = {
 
         this.cacheDOM();
         this.bindEvents();
-        // this.router.init(); // Removed from here to handle conditionally
 
         // Deep Link Check
         const beadCode = this.getBeadCodeFromURL();
         if (beadCode) {
-            // Force Dictionary View (Background)
-            this.render.page('dictionary');
-            this.updateNav('dictionary');
+            // 1) Force Dictionary View
+            // Use existing router logic to ensure filters/UI are set up
+            this.router.navigate('dictionary');
+            this.router.handleRoute(); // Force immediate render
 
+            // 2) Open Modal with Retry (Wait for DOM)
             const bead = Data.beads.find(b => b.dmcNumber.toString() === beadCode);
             if (bead) {
-                // Ensure renders happen first if needed, but here we just open modal
-                this.render.openModal(bead.id, false);
+                let attempts = 0;
+                const maxAttempts = 20;
+                const interval = setInterval(() => {
+                    attempts++;
+                    const beadListForCheck = document.getElementById('bead-list');
+
+                    // Check if dictionary is rendered (bead-list exists and has children)
+                    if (beadListForCheck && beadListForCheck.children.length > 0) {
+                        clearInterval(interval);
+
+                        // 3) Open Modal (No Push State)
+                        this.render.openModal(bead.id, false);
+
+                        // 4) Restore URL (Critical: hash change above might have set it to #dictionary)
+                        // This ensures the user still sees /beads/{code}
+                        history.replaceState({ modal: 'bead', id: bead.id }, '', `/beads/${encodeURIComponent(beadCode)}`);
+                    } else if (attempts >= maxAttempts) {
+                        clearInterval(interval);
+                        console.warn("Failed to open deep link modal: Timeout");
+                    }
+                }, 100);
             }
         } else {
             // Normal Hash Routing
