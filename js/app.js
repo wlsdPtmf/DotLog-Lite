@@ -20,6 +20,28 @@ const app = {
         this.cacheDOM();
         this.bindEvents();
         this.router.init();
+
+        // Deep Link Check
+        const beadCode = this.getBeadCodeFromURL();
+        if (beadCode) {
+            const bead = Data.beads.find(b => b.dmcNumber.toString() === beadCode);
+            if (bead) {
+                // Ensure renders happen first if needed, but here we just open modal
+                this.render.openModal(bead.id, false);
+            }
+        }
+    },
+
+    getBeadCodeFromURL: function () {
+        const path = window.location.pathname;
+        if (path.includes('/beads/')) {
+            const parts = path.split('/beads/');
+            if (parts.length > 1) {
+                // Return only the code part, remove any trailing slash or query params if simple
+                return parts[1].split('/')[0].split('?')[0];
+            }
+        }
+        return null;
     },
 
     toggleFavorite: function (id) {
@@ -340,6 +362,19 @@ const app = {
 
     bindEvents: function () {
         window.addEventListener('hashchange', () => this.router.handleRoute());
+
+        // Handle Browser Back/Forward (PopState)
+        window.addEventListener('popstate', (event) => {
+            const beadCode = this.getBeadCodeFromURL();
+            if (beadCode) {
+                const bead = Data.beads.find(b => b.dmcNumber.toString() === beadCode);
+                if (bead) {
+                    this.render.openModal(bead.id, false);
+                }
+            } else {
+                this.render.closeModal(false);
+            }
+        });
 
         // Mobile Menu Toggle
         if (this.mobileMenuBtn) {
@@ -698,7 +733,7 @@ const app = {
             `}).join('');
         },
 
-        openModal: function (id) {
+        openModal: function (id, pushState = true) {
             const bead = Data.beads.find(b => b.id === id);
             if (!bead) return;
 
@@ -735,11 +770,20 @@ const app = {
 
             const modal = document.getElementById('bead-modal');
             modal.classList.add('open');
+
+            if (pushState) {
+                history.pushState({ modal: 'bead', id: id }, '', `/beads/${bead.dmcNumber}`);
+            }
         },
 
-        closeModal: function () {
+        closeModal: function (pushState = true) {
             const modal = document.getElementById('bead-modal');
-            if (modal) modal.classList.remove('open');
+            if (modal && modal.classList.contains('open')) {
+                modal.classList.remove('open');
+                if (pushState) {
+                    history.pushState(null, '', '/');
+                }
+            }
         },
 
         handleSearch: function (query) {
