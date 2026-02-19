@@ -772,7 +772,8 @@ const app = {
             modal.classList.add('open');
 
             if (pushState) {
-                history.pushState({ modal: 'bead', id: id }, '', `/beads/${bead.dmcNumber}`);
+                const url = `/beads/${encodeURIComponent(bead.dmcNumber.toString())}`;
+                history.pushState({ modal: 'bead', id: id }, '', url);
             }
         },
 
@@ -1031,3 +1032,6 @@ document.addEventListener('DOMContentLoaded', () => {
     app.loadCompareList();
     app.init();
 });
+
+// Explicitly ensure app is on window for inline handlers
+window.app = app;
