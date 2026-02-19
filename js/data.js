@@ -8,7 +8,27 @@ const Data = {
         { id: 19, dmcNumber: "209", nameKr: "다크 라벤더", nameEn: "Lavender-DK", hex: "#BC8AC9", group: "Purple", tone: "mid", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
         { id: 20, dmcNumber: "210", nameKr: "미디엄 라벤더", nameEn: "Lavender-MD", hex: "#DABBDF", group: "Purple", tone: "light", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
         { id: 21, dmcNumber: "307", nameKr: "레몬", nameEn: "Lemon", hex: "#FEF65B", group: "Yellow", tone: "light", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
-        { id: 3, dmcNumber: "310", nameKr: "블랙", nameEn: "Black", hex: "#000000", group: "Gray", tone: "dark", recommendedSize: "40x50cm 이상", availableType: "원형/사각 공용" },
+        {
+            id: 3,
+            dmcNumber: "310",
+            nameKr: "블랙",
+            nameEn: "Black",
+            hex: "#000000",
+            group: "Gray",
+            tone: "dark",
+            recommendedSize: "40x50cm 이상",
+            availableType: "원형/사각 공용",
+            content: {
+                summary: "DMC 310(Black)은 보석십자수에서 가장 많이 사용되는 필수 색상입니다. 깊고 진한 검은색으로, 그림의 윤곽선이나 어두운 배경, 그림자 등을 표현할 때 없어서는 안 될 중요한 역할을 합니다.",
+                bullets: [
+                    "가장 기본적인 검은색으로 모든 색상과 잘 어울립니다.",
+                    "배경 채움이나 머리카락, 눈동자 표현에 자주 쓰입니다.",
+                    "단순한 검정이지만 레진, 아크릴 재질에 따라 광택의 느낌이 다를 수 있습니다."
+                ],
+                alternatives: ["3371 (Black Brown)", "939 (Navy Blue-VY DK)"],
+                notes: "워낙 많이 쓰이는 색상이라 대용량으로 구비해두시는 것을 추천합니다."
+            }
+        },
         { id: 32, dmcNumber: "317", nameKr: "퓨터 그레이", nameEn: "Pewter Gray", hex: "#6E6F72", group: "Gray", tone: "mid", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
         { id: 22, dmcNumber: "318", nameKr: "라이트 스틸 그레이", nameEn: "Steel Gray-LT", hex: "#B8B8B8", group: "Gray", tone: "light", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
         { id: 4, dmcNumber: "321", nameKr: "레드", nameEn: "Red", hex: "#C72B3B", group: "Red", tone: "mid", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
@@ -22,7 +42,27 @@ const Data = {
         { id: 6, dmcNumber: "550", nameKr: "바이올렛", nameEn: "Violet-VY DK", hex: "#5D1964", group: "Purple", tone: "dark", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
         { id: 28, dmcNumber: "600", nameKr: "베리 다크 크랜베리", nameEn: "Cranberry-VY DK", hex: "#CD2F62", group: "Red", tone: "mid", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
         { id: 7, dmcNumber: "606", nameKr: "브라이트 오렌지", nameEn: "Bright Orange-Red", hex: "#FA3203", group: "Orange", tone: "mid", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
-        { id: 8, dmcNumber: "666", nameKr: "크리스마스 레드", nameEn: "Christmas Red-BRT", hex: "#D90022", group: "Red", tone: "mid", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
+        {
+            id: 8,
+            dmcNumber: "666",
+            nameKr: "크리스마스 레드",
+            nameEn: "Christmas Red-BRT",
+            hex: "#D90022",
+            group: "Red",
+            tone: "mid",
+            recommendedSize: "30x40cm 이상",
+            availableType: "원형/사각 공용",
+            content: {
+                summary: "DMC 666(Christmas Red)은 이름처럼 선명하고 강렬한 밝은 빨간색입니다. 크리스마스 장식이나 꽃, 강조하고 싶은 포인트 컬러로 완벽한 색상입니다.",
+                bullets: [
+                    "채도가 높고 눈에 확 띄는 정석적인 빨간색입니다.",
+                    "장미, 산타클로스 옷, 크리스마스 장식 등에 주로 쓰입니다.",
+                    "생동감 넘치는 작품을 만들 때 포인트로 활용하기 좋습니다."
+                ],
+                alternatives: ["321 (Red)", "349 (Dark Coral)"],
+                notes: "너무 많이 사용하면 눈이 부실 수 있으니 포인트로 적절히 사용해 보세요."
+            }
+        },
         { id: 9, dmcNumber: "700", nameKr: "브라이트 그린", nameEn: "Christmas Green-BRT", hex: "#066A23", group: "Green", tone: "dark", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
         { id: 29, dmcNumber: "701", nameKr: "라이트 크리스마스 그린", nameEn: "Christmas Green-LT", hex: "#268C3F", group: "Green", tone: "mid", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
         { id: 10, dmcNumber: "725", nameKr: "토파즈", nameEn: "Topaz", hex: "#FFC846", group: "Yellow", tone: "mid", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
@@ -42,7 +82,27 @@ const Data = {
         { id: 41, dmcNumber: "995", nameKr: "일렉트릭 블루", nameEn: "Electric Blue", hex: "#0068B1", group: "Blue", tone: "mid", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
         { id: 42, dmcNumber: "3801", nameKr: "라이트 크리스마스 레드", nameEn: "Christmas Red-LT", hex: "#E12335", group: "Red", tone: "light", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
         { id: 43, dmcNumber: "3865", nameKr: "윈터 화이트", nameEn: "Winter White", hex: "#F8F6F1", group: "White", tone: "light", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
-        { id: 16, dmcNumber: "5200", nameKr: "스노우 화이트", nameEn: "Snow White", hex: "#FFFFFF", group: "White", tone: "light", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
+        {
+            id: 16,
+            dmcNumber: "5200",
+            nameKr: "스노우 화이트",
+            nameEn: "Snow White",
+            hex: "#FFFFFF",
+            group: "White",
+            tone: "light",
+            recommendedSize: "30x40cm 이상",
+            availableType: "원형/사각 공용",
+            content: {
+                summary: "DMC 5200(Snow White)은 눈처럼 깨끗하고 쨍한 순백색입니다. 일반 화이트(White/Blanc)보다 더 밝고 차가운 느낌을 주어 하이라이트 표현이나 겨울 풍경에 적합합니다.",
+                bullets: [
+                    "가장 밝은 흰색으로 시원하고 깨끗한 느낌을 줍니다.",
+                    "눈 결정, 구름, 웨딩드레스 등의 표현에 탁월합니다.",
+                    "일반 화이트(Blanc)와 혼용하면 미세한 명암 차이를 줄 수 있습니다."
+                ],
+                alternatives: ["BLANC (White)", "3865 (Winter White)"],
+                notes: "오염에 취약할 수 있으니 작업 시 깨끗한 손으로 만져주세요."
+            }
+        },
         { id: 44, dmcNumber: "702", nameKr: "켈리 그린", nameEn: "Kelly Green", hex: "#478F41", group: "Green", tone: "mid", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
         { id: 45, dmcNumber: "703", nameKr: "샤트뢰즈", nameEn: "Chartreuse", hex: "#75B048", group: "Green", tone: "light", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },
         { id: 46, dmcNumber: "704", nameKr: "브라이트 샤트뢰즈", nameEn: "Chartreuse-BRT", hex: "#9ACD5B", group: "Green", tone: "light", recommendedSize: "30x40cm 이상", availableType: "원형/사각 공용" },

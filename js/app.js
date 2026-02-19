@@ -764,6 +764,35 @@ const app = {
             const bead = Data.beads.find(b => b.id === id);
             if (!bead) return;
 
+            // 1. Dynamic SEO Update
+            document.title = `DMC ${bead.dmcNumber} 색상 정보 | DotLog Lite`;
+
+            const metaDesc = document.getElementById('meta-description');
+            if (metaDesc) {
+                // Use custom description if available, otherwise generate one
+                const desc = bead.content && bead.content.summary
+                    ? bead.content.summary
+                    : `DMC ${bead.dmcNumber} (${bead.nameKr}/${bead.nameEn}) 색상 정보. ${bead.group} 계열의 ${bead.tone} 톤 비즈로, 추천 도안 및 대체 색상 정보를 확인하세요.`;
+                metaDesc.setAttribute('content', desc);
+            }
+
+            const canonical = document.getElementById('canonical');
+            if (canonical) {
+                canonical.setAttribute('href', `https://dotlog-lite.pages.dev/beads/${encodeURIComponent(bead.dmcNumber)}`);
+            }
+
+            // 2. Content Generation (Fallback Logic)
+            const content = bead.content || {
+                summary: `DMC ${bead.dmcNumber}는 ${bead.group} 계열의 매력적인 색상입니다.`,
+                bullets: [
+                    `${bead.tone} 톤으로 다양한 도안에 활용됩니다.`,
+                    `주로 자연 풍경이나 인물 피부톤 표현 등에 사용될 수 있습니다.`,
+                    `DMC 표준 번호를 따르며, 제조사에 따라 미세한 차이가 있을 수 있습니다.`
+                ],
+                alternatives: ["비슷한 계열의 다른 색상을 '비즈 도감'에서 찾아보세요."],
+                notes: "모니터 해상도에 따라 실제 비즈 색상과 차이가 있을 수 있으니 참고하세요."
+            };
+
             const modalBody = document.getElementById('modal-body');
             modalBody.innerHTML = `
                 <div class="modal-bead-info">
@@ -771,7 +800,7 @@ const app = {
                     <h2 style="font-size: 2rem; margin-bottom: 5px; color: var(--primary-color);">${bead.dmcNumber}</h2>
                     <h3 style="font-size: 1.2rem; margin-bottom: 20px; color: var(--text-color);">${bead.nameKr} / ${bead.nameEn}</h3>
                     
-                    <div style="text-align: left; background: #f9fafb; padding: 20px; border-radius: 12px;">
+                    <div style="text-align: left; background: #f9fafb; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
                         <div class="modal-detail-row">
                             <span class="modal-label">색상 계열</span>
                             <span class="modal-value">${bead.group} (${bead.tone})</span>
@@ -789,9 +818,25 @@ const app = {
                             <span class="modal-value">${bead.availableType}</span>
                         </div>
                     </div>
-                    <p style="margin-top: 20px; font-size: 0.9rem; color: var(--text-light);">
-                        * 모니터 설정에 따라 실제 색상과 다를 수 있습니다.
-                    </p>
+
+                    <!-- SEO Content Block -->
+                    <div class="modal-content-block" style="text-align: left; padding: 0 10px;">
+                        <h4 style="border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">💡 상세 정보</h4>
+                        <p style="line-height: 1.6; color: #4b5563; margin-bottom: 15px;">
+                            ${content.summary}
+                        </p>
+                        <ul style="list-style-type: disc; padding-left: 20px; color: #4b5563; margin-bottom: 15px; line-height: 1.6;">
+                            ${content.bullets.map(b => `<li>${b}</li>`).join('')}
+                        </ul>
+                        ${content.alternatives && content.alternatives.length > 0 ? `
+                        <p style="font-weight: 500; margin-bottom: 5px;">🔄 대체 추천 색상:</p>
+                        <p style="color: #6b7280; font-size: 0.95em;">${content.alternatives.join(', ')}</p>
+                        ` : ''}
+                        <p style="margin-top: 15px; font-size: 0.9em; color: #9ca3af; border-top: 1px dashed #e5e7eb; padding-top: 10px;">
+                            📝 참고: ${content.notes}
+                        </p>
+                    </div>
+
                 </div>
             `;
 
@@ -808,6 +853,16 @@ const app = {
             const modal = document.getElementById('bead-modal');
             if (modal && modal.classList.contains('open')) {
                 modal.classList.remove('open');
+
+                // Reset SEO Tags
+                document.title = "DotLog Lite | 보석십자수를 더 스마트하게";
+
+                const metaDesc = document.getElementById('meta-description');
+                if (metaDesc) metaDesc.setAttribute('content', "색상 비교, 비즈 관리, 쇼핑 연결까지. 보석십자수를 위한 정리된 올인원 도구.");
+
+                const canonical = document.getElementById('canonical');
+                if (canonical) canonical.setAttribute('href', "https://dotlog-lite.pages.dev/");
+
                 if (pushState) {
                     history.pushState(null, '', '/');
                 }
