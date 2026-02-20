@@ -1684,4 +1684,10 @@ main {
         font-size: 1.6rem !important;
         margin-bottom: 2px !important;
     }
+
+    /* Keep compare bar floating just below the modal/screen edge when modal is open */
+    body.modal-open .compare-bar {
+        bottom: 20px;
+        z-index: 1010;
+    }
 }

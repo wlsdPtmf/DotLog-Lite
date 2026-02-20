@@ -310,6 +310,7 @@ const app = {
         }
 
         document.body.style.overflow = 'hidden';
+        document.body.classList.add('modal-open');
 
         const selectedBeads = Data.beads.filter(b => this.compareList.includes(b.id));
         const modalBody = document.getElementById('compare-body');
@@ -375,6 +376,7 @@ const app = {
         if (modal) {
             modal.classList.remove('open');
             document.body.style.overflow = '';
+            document.body.classList.remove('modal-open');
         }
     },
 
@@ -963,6 +965,7 @@ const app = {
             const modal = document.getElementById('bead-modal');
             modal.classList.add('open');
             document.body.style.overflow = 'hidden';
+            document.body.classList.add('modal-open');
 
             if (pushState) {
                 const url = `/beads/${encodeURIComponent(bead.dmcNumber.toString())}`;
@@ -975,6 +978,7 @@ const app = {
             if (modal && modal.classList.contains('open')) {
                 modal.classList.remove('open');
                 document.body.style.overflow = '';
+                document.body.classList.remove('modal-open');
 
                 // Reset SEO Tags
                 document.title = "DotLog Lite | 보석십자수를 더 스마트하게";
