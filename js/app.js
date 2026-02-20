@@ -524,6 +524,8 @@ const app = {
     },
 
     router: {
+        lastTrackedPath: '',
+
         init: function () {
             this.handleRoute();
         },
@@ -541,6 +543,21 @@ const app = {
             app.render.page(hash);
             app.updateNav(hash);
             window.scrollTo(0, 0);
+
+            this.trackPageView();
+        },
+
+        trackPageView: function () {
+            const currentPath = window.location.pathname + window.location.hash;
+            if (this.lastTrackedPath === currentPath) return; // Prevent duplicates
+            this.lastTrackedPath = currentPath;
+
+            if (typeof gtag === 'function') {
+                gtag('event', 'page_view', {
+                    page_path: currentPath,
+                    page_title: document.title
+                });
+            }
         }
     },
 
