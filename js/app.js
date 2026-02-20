@@ -305,6 +305,20 @@ const app = {
         if (modal) modal.classList.remove('open');
     },
 
+    toggleBeadDetail: function (btn) {
+        const content = document.getElementById('bead-detail-content');
+        if (content) {
+            content.classList.toggle('collapsed');
+            if (content.classList.contains('collapsed')) {
+                content.style.display = 'none';
+                btn.textContent = '상세정보 보기';
+            } else {
+                content.style.display = 'block';
+                btn.textContent = '상세정보 닫기';
+            }
+        }
+    },
+
     // Admin & Shop Functions
     toggleAdmin: function () {
         this.isAdmin = !this.isAdmin;
@@ -821,20 +835,25 @@ const app = {
 
                     <!-- SEO Content Block -->
                     <div class="modal-content-block" style="text-align: left; padding: 0 10px;">
-                        <h4 style="border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">💡 상세 정보</h4>
-                        <p style="line-height: 1.6; color: #4b5563; margin-bottom: 15px;">
-                            ${content.summary}
-                        </p>
-                        <ul style="list-style-type: disc; padding-left: 20px; color: #4b5563; margin-bottom: 15px; line-height: 1.6;">
-                            ${content.bullets.map(b => `<li>${b}</li>`).join('')}
-                        </ul>
-                        ${content.alternatives && content.alternatives.length > 0 ? `
-                        <p style="font-weight: 500; margin-bottom: 5px;">🔄 대체 추천 색상:</p>
-                        <p style="color: #6b7280; font-size: 0.95em;">${content.alternatives.join(', ')}</p>
-                        ` : ''}
-                        <p style="margin-top: 15px; font-size: 0.9em; color: #9ca3af; border-top: 1px dashed #e5e7eb; padding-top: 10px;">
-                            📝 참고: ${content.notes}
-                        </p>
+                        <h4 style="border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                            <span>💡 상세 정보</span>
+                            <button class="bead-detail-toggle-btn" onclick="app.toggleBeadDetail(this)" style="background: none; border: 1px solid #ccc; border-radius: 4px; padding: 4px 8px; font-size: 0.8rem; cursor: pointer; color: #666;">상세정보 보기</button>
+                        </h4>
+                        <div id="bead-detail-content" class="collapsed" style="display: none;">
+                            <p style="line-height: 1.6; color: #4b5563; margin-bottom: 15px;">
+                                ${content.summary}
+                            </p>
+                            <ul style="list-style-type: disc; padding-left: 20px; color: #4b5563; margin-bottom: 15px; line-height: 1.6;">
+                                ${content.bullets.map(b => `<li>${b}</li>`).join('')}
+                            </ul>
+                            ${content.alternatives && content.alternatives.length > 0 ? `
+                            <p style="font-weight: 500; margin-bottom: 5px;">🔄 대체 추천 색상:</p>
+                            <p style="color: #6b7280; font-size: 0.95em;">${content.alternatives.join(', ')}</p>
+                            ` : ''}
+                            <p style="margin-top: 15px; font-size: 0.9em; color: #9ca3af; border-top: 1px dashed #e5e7eb; padding-top: 10px;">
+                                📝 참고: ${content.notes}
+                            </p>
+                        </div>
                     </div>
 
                 </div>
