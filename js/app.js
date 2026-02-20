@@ -203,6 +203,18 @@ const app = {
                 }
             }, 300);
         }
+
+        this.syncModalSafeArea();
+    },
+
+    syncModalSafeArea: function () {
+        const modals = document.querySelectorAll('.modal-content');
+        if (this.compareList.length > 0) {
+            // Add extra space at the bottom when compare bar is visible
+            modals.forEach(m => m.style.paddingBottom = '100px');
+        } else {
+            modals.forEach(m => m.style.paddingBottom = '');
+        }
     },
 
     saveCompareList: function () {
@@ -279,6 +291,8 @@ const app = {
             return;
         }
 
+        document.body.style.overflow = 'hidden';
+
         const selectedBeads = Data.beads.filter(b => this.compareList.includes(b.id));
         const modalBody = document.getElementById('compare-body');
 
@@ -340,7 +354,10 @@ const app = {
 
     closeCompareModal: function () {
         const modal = document.getElementById('compare-modal');
-        if (modal) modal.classList.remove('open');
+        if (modal) {
+            modal.classList.remove('open');
+            document.body.style.overflow = '';
+        }
     },
 
     toggleBeadDetail: function (btn) {
@@ -927,6 +944,7 @@ const app = {
 
             const modal = document.getElementById('bead-modal');
             modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
 
             if (pushState) {
                 const url = `/beads/${encodeURIComponent(bead.dmcNumber.toString())}`;
@@ -938,6 +956,7 @@ const app = {
             const modal = document.getElementById('bead-modal');
             if (modal && modal.classList.contains('open')) {
                 modal.classList.remove('open');
+                document.body.style.overflow = '';
 
                 // Reset SEO Tags
                 document.title = "DotLog Lite | 보석십자수를 더 스마트하게";

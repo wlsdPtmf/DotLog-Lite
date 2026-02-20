@@ -857,7 +857,10 @@ main {
     position: relative;
     box-shadow: var(--shadow-md);
     transform: translateY(20px);
-    transition: transform 0.3s;
+    transition: transform 0.3s, padding-bottom 0.3s;
+    max-height: 85vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal-overlay.open .modal-content {
