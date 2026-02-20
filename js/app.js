@@ -152,6 +152,24 @@ const app = {
     },
 
     // Compare Feature
+    syncCompareUI: function () {
+        const allBtns = document.querySelectorAll('.compare-btn, .sim-compare-btn');
+        allBtns.forEach(btn => {
+            const idAttr = btn.getAttribute('data-id');
+            if (idAttr) {
+                const id = parseInt(idAttr);
+                if (this.compareList.includes(id)) {
+                    btn.classList.add('active');
+                    btn.textContent = '✔';
+                } else {
+                    btn.classList.remove('active');
+                    btn.textContent = '➕';
+                }
+            }
+        });
+        this.updateCompareBar();
+    },
+
     toggleCompare: function (id) {
         const idx = this.compareList.indexOf(id);
         if (idx === -1) {
@@ -159,19 +177,8 @@ const app = {
         } else {
             this.compareList.splice(idx, 1);
         }
-        // Toggle button visual state
-        const btns = document.querySelectorAll(`.compare-btn[data-id="${id}"]`);
-        btns.forEach(btn => {
-            if (this.compareList.includes(id)) {
-                btn.classList.add('active');
-                btn.textContent = '✔';
-            } else {
-                btn.classList.remove('active');
-                btn.textContent = '➕';
-            }
-        });
-        this.updateCompareBar();
         this.saveCompareList();
+        this.syncCompareUI();
     },
 
     updateCompareBar: function () {
@@ -304,15 +311,8 @@ const app = {
         this.compareList = [];
         this.saveCompareList();
 
-        // 2. Update all buttons in main list
-        const allActiveBtns = document.querySelectorAll('.compare-btn.active');
-        allActiveBtns.forEach(btn => {
-            btn.classList.remove('active');
-            btn.textContent = '➕';
-        });
-
-        // 3. Update Bar & Modal
-        this.updateCompareBar();
+        // 2. Update UI & Modal
+        this.syncCompareUI();
         this.closeCompareModal();
     },
 
@@ -324,15 +324,8 @@ const app = {
         this.compareList.splice(idx, 1);
         this.saveCompareList();
 
-        // 2. Update specific button in main list
-        const btns = document.querySelectorAll(`.compare-btn[data-id="${id}"]`);
-        btns.forEach(btn => {
-            btn.classList.remove('active');
-            btn.textContent = '➕';
-        });
-
-        // 3. Update Bar & Modal
-        this.updateCompareBar();
+        // 2. Update UI
+        this.syncCompareUI();
 
         if (this.compareList.length === 0) {
             this.closeCompareModal();
@@ -869,7 +862,7 @@ const app = {
                                     <div style="width: 24px; height: 24px; border-radius: 50%; background-color: ${sim.hex}; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); margin-bottom: 6px;"></div>
                                     <div style="font-weight: 700; color: var(--primary-color); font-size: 0.9rem;">${sim.dmcNumber}</div>
                                     <div style="font-size: 0.75rem; color: #6b7280; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;">${sim.nameKr}</div>
-                                    <button onclick="event.stopPropagation(); app.toggleCompare(${sim.id}); this.textContent = app.compareList.includes(${sim.id}) ? '✔' : '➕';" 
+                                    <button class="sim-compare-btn ${app.compareList.includes(sim.id) ? 'active' : ''}" data-id="${sim.id}" onclick="event.stopPropagation(); app.toggleCompare(${sim.id});" 
                                             style="position: absolute; top: 4px; right: 4px; border: none; background: #f3f4f6; border-radius: 4px; width: 20px; height: 20px; font-size: 0.7rem; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #4b5563;">
                                         ${app.compareList.includes(sim.id) ? '✔' : '➕'}
                                     </button>
