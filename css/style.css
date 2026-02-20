@@ -1685,14 +1685,22 @@ main {
         margin-bottom: 2px !important;
     }
 
-    /* Keep compare bar floating just below the modal/screen edge when modal is open */
-    body.modal-open .compare-bar {
-        bottom: 20px;
+    /* Dock compare bar inside modal */
+    .modal-footer-dock {
+        position: sticky;
+        bottom: -20px;
+        /* Offset for modal component padding */
+        margin-left: -20px;
+        width: calc(100% + 40px);
         z-index: 1010;
-        transition: bottom 0.3s ease-in-out;
+        margin-top: 20px;
     }
 
-    body.modal-open.details-open .compare-bar {
-        bottom: 85px;
+    .modal-footer-dock .compare-bar {
+        position: relative;
+        bottom: 0;
+        border-radius: 0 0 var(--radius) var(--radius);
+        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+        /* Slight shadow to separate from content */
     }
 }
