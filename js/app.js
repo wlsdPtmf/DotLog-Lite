@@ -387,9 +387,28 @@ const app = {
             if (content.classList.contains('collapsed')) {
                 content.style.display = 'none';
                 btn.textContent = '상세정보 보기';
+                document.body.classList.remove('details-open');
             } else {
                 content.style.display = 'block';
                 btn.textContent = '상세정보 닫기';
+                document.body.classList.add('details-open');
+
+                if (this.compareList.length > 0) {
+                    setTimeout(() => {
+                        const activeModalContent = document.querySelector('.modal-overlay.open .modal-content');
+                        if (activeModalContent) {
+                            const similarHeader = activeModalContent.querySelector('h4:last-of-type');
+                            if (similarHeader && similarHeader.textContent.includes('🎨')) {
+                                similarHeader.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                            } else {
+                                activeModalContent.scrollTo({
+                                    top: activeModalContent.scrollHeight,
+                                    behavior: 'smooth'
+                                });
+                            }
+                        }
+                    }, 50);
+                }
             }
         }
     },
@@ -966,6 +985,7 @@ const app = {
             modal.classList.add('open');
             document.body.style.overflow = 'hidden';
             document.body.classList.add('modal-open');
+            document.body.classList.remove('details-open'); // Reset on new modal
 
             if (pushState) {
                 const url = `/beads/${encodeURIComponent(bead.dmcNumber.toString())}`;
@@ -979,6 +999,7 @@ const app = {
                 modal.classList.remove('open');
                 document.body.style.overflow = '';
                 document.body.classList.remove('modal-open');
+                document.body.classList.remove('details-open');
 
                 // Reset SEO Tags
                 document.title = "DotLog Lite | 보석십자수를 더 스마트하게";

@@ -1689,5 +1689,10 @@ main {
     body.modal-open .compare-bar {
         bottom: 20px;
         z-index: 1010;
+        transition: bottom 0.3s ease-in-out;
+    }
+
+    body.modal-open.details-open .compare-bar {
+        bottom: 85px;
     }
 }
