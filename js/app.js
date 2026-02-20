@@ -189,11 +189,29 @@ const app = {
         const count = this.compareList.length;
         countEl.textContent = count;
 
+        const isCurrentlyHidden = !bar.classList.contains('visible');
+
         if (count > 0) {
             bar.style.display = 'flex';
             // Trigger reflow for animation
             void bar.offsetWidth;
             bar.classList.add('visible');
+
+            // If it just became visible, auto-scroll modal so recommended beads are not hidden
+            if (isCurrentlyHidden) {
+                setTimeout(() => {
+                    const activeModalContent = document.querySelector('.modal-overlay.open .modal-content');
+                    if (activeModalContent) {
+                        const similarSection = activeModalContent.querySelector('h4'); // "🎨 비슷한 색 추천" header
+                        // Alternatively, scrolling to the very bottom is usually the safest way to ensure 
+                        // the last elements are visible since similar colors are at the absolute bottom
+                        activeModalContent.scrollTo({
+                            top: activeModalContent.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    }
+                }, 100); // Wait for the padding expansion to apply
+            }
         } else {
             bar.classList.remove('visible');
             // Wait for fade-out transition then hide
