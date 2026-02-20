@@ -71,6 +71,51 @@ const app = {
         return null;
     },
 
+    hexToRgb: function (hex) {
+        // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+        var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+        hex = hex.replace(shorthandRegex, function (m, r, g, b) {
+            return r + r + g + g + b + b;
+        });
+
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    },
+
+    getColorDistance: function (rgb1, rgb2) {
+        if (!rgb1 || !rgb2) return Infinity;
+        // Simple Euclidean distance in RGB space
+        return Math.sqrt(
+            Math.pow(rgb1.r - rgb2.r, 2) +
+            Math.pow(rgb1.g - rgb2.g, 2) +
+            Math.pow(rgb1.b - rgb2.b, 2)
+        );
+    },
+
+    getSimilarBeads: function (currentBead, limit = 3) {
+        const currentRgb = this.hexToRgb(currentBead.hex);
+        if (!currentRgb) return [];
+
+        const distances = Data.beads
+            .filter(b => b.id !== currentBead.id) // exclude current
+            .map(b => {
+                const rgb = this.hexToRgb(b.hex);
+                const dist = this.getColorDistance(currentRgb, rgb);
+                return { bead: b, dist: dist };
+            })
+            .filter(item => item.dist !== Infinity); // safety check
+
+        // Sort ascending by distance
+        distances.sort((a, b) => a.dist - b.dist);
+
+        // Return top N
+        return distances.slice(0, limit).map(item => item.bead);
+    },
+
     toggleFavorite: function (id) {
         const idx = this.favorites.indexOf(id);
         if (idx === -1) this.favorites.push(id);
@@ -808,6 +853,33 @@ const app = {
             };
 
             const modalBody = document.getElementById('modal-body');
+
+            // --- Compute Similar Colors ---
+            const similarBeads = app.getSimilarBeads(bead, 3);
+            let similarUI = '';
+            if (similarBeads.length > 0) {
+                similarUI = `
+                    <div style="margin-top: 25px; padding-top: 15px; border-top: 2px solid #eee; text-align: left;">
+                        <h4 style="margin-bottom: 12px; display: flex; align-items: center; gap: 5px;">
+                            <span>🎨 비슷한 색 추천</span>
+                        </h4>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            ${similarBeads.map(sim => `
+                                <div class="similar-bead-card" onclick="app.openModal(${sim.id})" style="flex: 1; min-width: 80px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative; display: flex; flex-direction: column; align-items: center; justify-content: space-between;">
+                                    <div style="width: 24px; height: 24px; border-radius: 50%; background-color: ${sim.hex}; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); margin-bottom: 6px;"></div>
+                                    <div style="font-weight: 700; color: var(--primary-color); font-size: 0.9rem;">${sim.dmcNumber}</div>
+                                    <div style="font-size: 0.75rem; color: #6b7280; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;">${sim.nameKr}</div>
+                                    <button onclick="event.stopPropagation(); app.toggleCompare(${sim.id}); this.textContent = app.compareList.includes(${sim.id}) ? '✔' : '➕';" 
+                                            style="position: absolute; top: 4px; right: 4px; border: none; background: #f3f4f6; border-radius: 4px; width: 20px; height: 20px; font-size: 0.7rem; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #4b5563;">
+                                        ${app.compareList.includes(sim.id) ? '✔' : '➕'}
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
             modalBody.innerHTML = `
                 <div class="modal-bead-info">
                     <div class="modal-color-box" style="background-color: ${bead.hex}"></div>
@@ -856,6 +928,7 @@ const app = {
                         </div>
                     </div>
 
+                    ${similarUI}
                 </div>
             `;
 
