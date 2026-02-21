@@ -5,6 +5,13 @@ const app = {
     compareList: [],
     isAdmin: false,
 
+    track: function (eventName, params) {
+        try {
+            if (typeof window.gtag === 'function') {
+                window.gtag('event', eventName, params || {});
+            }
+        } catch (e) { }
+    },
 
     init: function () {
         // Load states
@@ -118,10 +125,19 @@ const app = {
 
     toggleFavorite: function (id) {
         const idx = this.favorites.indexOf(id);
-        if (idx === -1) this.favorites.push(id);
-        else this.favorites.splice(idx, 1);
+        const bead = Data.beads.find(b => b.id === id);
+        const code = bead ? bead.dmcNumber.toString() : "";
+        let state = "on";
+
+        if (idx === -1) {
+            this.favorites.push(id);
+        } else {
+            this.favorites.splice(idx, 1);
+            state = "off";
+        }
         localStorage.setItem('dotlog_favorites', JSON.stringify(this.favorites));
         this.updateUI(id);
+        if (code) this.track('favorite_toggle', { code, state });
     },
 
     toggleOwned: function (id) {
@@ -170,10 +186,14 @@ const app = {
         this.updateCompareBar();
     },
 
-    toggleCompare: function (id) {
+    toggleCompare: function (id, source = 'list') {
         const idx = this.compareList.indexOf(id);
         if (idx === -1) {
             this.compareList.push(id);
+            const bead = Data.beads.find(b => b.id === id);
+            if (bead) {
+                this.track('compare_add', { code: bead.dmcNumber.toString(), source });
+            }
         } else {
             this.compareList.splice(idx, 1);
         }
@@ -516,9 +536,37 @@ const app = {
         });
 
         // Simple search delegation
+        let searchTimeout;
         this.mainContent.addEventListener('input', (e) => {
             if (e.target.classList.contains('search-input')) {
-                this.render.handleSearch(e.target.value);
+                const query = e.target.value;
+                this.render.handleSearch(query);
+
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    if (query.trim().length >= 2) {
+                        app.track('bead_search', { query: query.trim() });
+                    }
+                }, 800);
+            }
+        });
+
+        // Shop Link Click Delegation
+        document.body.addEventListener('click', (e) => {
+            const link = e.target.closest('a.shop-link');
+            if (link) {
+                let code = link.getAttribute('data-code');
+                if (!code) {
+                    // Try to use currently open bead code from modal
+                    const modal = document.getElementById('bead-modal');
+                    if (modal && modal.classList.contains('open')) {
+                        const codeEl = modal.querySelector('h2');
+                        if (codeEl) code = codeEl.textContent;
+                    }
+                }
+                const shop = link.getAttribute('data-shop') || 'Unknown Shop';
+                const url = link.href;
+                app.track('shop_click', { code: code || '', shop, url });
             }
         });
     },
@@ -867,7 +915,7 @@ const app = {
                     </div>
 
                     <!-- Compare Button -->
-                    <button class="compare-btn ${app.compareList.includes(bead.id) ? 'active' : ''}" data-id="${bead.id}" onclick="event.stopPropagation(); app.toggleCompare(${bead.id})" title="비교함 담기">${app.compareList.includes(bead.id) ? '✔' : '➕'}</button>
+                    <button class="compare-btn ${app.compareList.includes(bead.id) ? 'active' : ''}" data-id="${bead.id}" onclick="event.stopPropagation(); app.toggleCompare(${bead.id}, 'list')" title="비교함 담기">${app.compareList.includes(bead.id) ? '✔' : '➕'}</button>
 
                 </div>
             `}).join('');
@@ -879,6 +927,8 @@ const app = {
 
             // 1. Dynamic SEO Update
             document.title = `DMC ${bead.dmcNumber} 색상 정보 | DotLog Lite`;
+
+            app.track('bead_open', { code: bead.dmcNumber.toString(), name: bead.nameKr });
 
             const metaDesc = document.getElementById('meta-description');
             if (metaDesc) {
@@ -923,7 +973,7 @@ const app = {
                                     <div style="width: 24px; height: 24px; border-radius: 50%; background-color: ${sim.hex}; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); margin-bottom: 6px;"></div>
                                     <div style="font-weight: 700; color: var(--primary-color); font-size: 0.9rem;">${sim.dmcNumber}</div>
                                     <div style="font-size: 0.75rem; color: #6b7280; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;">${sim.nameKr}</div>
-                                    <button class="sim-compare-btn ${app.compareList.includes(sim.id) ? 'active' : ''}" data-id="${sim.id}" onclick="event.stopPropagation(); app.toggleCompare(${sim.id});" 
+                                    <button class="sim-compare-btn ${app.compareList.includes(sim.id) ? 'active' : ''}" data-id="${sim.id}" onclick="event.stopPropagation(); app.toggleCompare(${sim.id}, 'similar');" 
                                             style="position: absolute; top: 4px; right: 4px; border: none; background: #f3f4f6; border-radius: 4px; width: 20px; height: 20px; font-size: 0.7rem; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #4b5563;">
                                         ${app.compareList.includes(sim.id) ? '✔' : '➕'}
                                     </button>
@@ -1076,7 +1126,7 @@ const app = {
                                 </div>
                             </div>
                             <div style="display:flex; justify-content: flex-end; gap:8px; align-items:center; margin-top:8px;">
-                                <a href="${sub.url}" target="_blank" class="shop-sub-btn">방문하기</a>
+                                <a href="${sub.url}" target="_blank" class="shop-sub-btn shop-link" data-shop="${sub.name}">방문하기</a>
                                 ${app.isAdmin ? `
                                     <div class="admin-controls">
                                         <button class="admin-btn edit" onclick="app.editShopItem(${parentCatIdx}, ${parentItemIdx}, ${subIdx})">✏️</button>
@@ -1110,7 +1160,7 @@ const app = {
                                     ${shop.items.map(item => `
                                         <li class="shop-item">
                                             <span>${item.name}</span>
-                                            <a href="${item.url}" target="_blank" class="shop-btn">방문하기</a>
+                                            <a href="${item.url}" target="_blank" class="shop-btn shop-link" data-shop="${item.name}">방문하기</a>
                                         </li>
                                     `).join('')}
                                 </ul>
@@ -1134,7 +1184,7 @@ const app = {
                                                     <div class="shop-expand-title-group">
                                                         <div class="shop-expand-name" style="font-size: 1.1rem; font-weight: 700;">🛍️ ${item.name}</div>
                                                     </div>
-                                                    <a href="${item.officialUrl}" target="_blank" class="shop-official-btn">
+                                                    <a href="${item.officialUrl}" target="_blank" class="shop-official-btn shop-link" data-shop="${item.name}">
                                                         <span class="shop-badge badge-official">🏠</span> 공식 홈페이지
                                                     </a>
                                                 </div>
