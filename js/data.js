@@ -193,7 +193,7 @@ const Data = {
                         </ul>
                     </div>
                     <div class="guide-img-container">
-                        <img class="img-placeholder" src="./images/guide_tray.jpg" alt="트레이 보관함">
+                        <img class="img-placeholder" src="/images/guide_tray.jpg" alt="트레이 보관함">
                     </div>
                 </div>
 
@@ -204,7 +204,7 @@ const Data = {
                         </ul>
                     </div>
                     <div class="guide-img-container">
-                        <img class="img-placeholder" src="./images/guide_box.jpg" alt="비즈 보관함">
+                        <img class="img-placeholder" src="/images/guide_box.jpg" alt="비즈 보관함">
                     </div>
                 </div>
 
@@ -215,7 +215,7 @@ const Data = {
                         </ul>
                     </div>
                     <div class="guide-img-container">
-                        <img class="img-placeholder" src="./images/guide_single.jpg" alt="단품 트레이">
+                        <img class="img-placeholder" src="/images/guide_single.jpg" alt="단품 트레이">
                     </div>
                 </div>
             `
@@ -231,7 +231,7 @@ const Data = {
                         </ul>
                     </div>
                     <div class="guide-img-container">
-                        <img class="img-placeholder" src="./images/guide_round.jpg" alt="원형 비즈">
+                        <img class="img-placeholder" src="/images/guide_round.jpg" alt="원형 비즈">
                     </div>
                 </div>
 
@@ -242,7 +242,7 @@ const Data = {
                         </ul>
                     </div>
                     <div class="guide-img-container">
-                        <img class="img-placeholder" src="./images/guide_square.jpg" alt="사각 비즈">
+                        <img class="img-placeholder" src="/images/guide_square.jpg" alt="사각 비즈">
                     </div>
                 </div>
 

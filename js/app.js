@@ -646,6 +646,12 @@ const app = {
                 case 'about':
                     this.about();
                     break;
+                case 'privacy':
+                    this.privacy();
+                    break;
+                case 'contact':
+                    this.contact();
+                    break;
                 default:
                     this.home();
             }
@@ -1261,23 +1267,69 @@ const app = {
 
         about: function () {
             app.mainContent.innerHTML = `
-                 <div class="section-title">About DotLog Lite</div>
-                 <div class="card" style="max-width: 800px; margin: 0 auto; text-align: center; padding: 60px 40px;">
-                    <h2 class="logo" style="margin-bottom: 20px;">DotLog <span class="lite">Lite</span></h2>
-                    <p style="font-size: 1.2rem; margin-bottom: 30px; color: var(--text-light);">
-                        보석십자수를 사랑하는 모든 분들을 위한<br>
-                        비영리 공용 참고 도감입니다.
+                 <div class="section-title">사이트 소개 (About)</div>
+                 <div class="card" style="max-width: 800px; margin: 0 auto; padding: 40px; line-height: 1.6;">
+                    <h2 class="logo" style="margin-bottom: 20px; text-align: center;">DotLog <span class="lite">Lite</span></h2>
+                    <p style="font-size: 1.1rem; margin-bottom: 20px; text-align: center; color: var(--text-color);">
+                        보석십자수를 사랑하는 모든 분들을 위한 비영리 공용 참고 도감입니다.
                     </p>
-                    <div style="background: var(--primary-light); padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="margin-bottom: 10px; color: var(--primary-color);">주요 기능</h3>
+                        <ul style="list-style-type: disc; padding-left: 20px; color: var(--text-color);">
+                            <li style="margin-bottom: 8px;"><strong>비즈 도감:</strong> DMC 번호와 색상 정보를 한눈에 확인할 수 있습니다.</li>
+                            <li style="margin-bottom: 8px;"><strong>색상 비교:</strong> 여러 비즈를 비교함에 담아 나란히 색상을 대조해 볼 수 있습니다.</li>
+                            <li style="margin-bottom: 8px;"><strong>재고 확인 상태:</strong> 보유, 구매 필요, 찜 상태를 체크하고 쉽게 확인할 수 있습니다.</li>
+                            <li style="margin-bottom: 8px;"><strong>비슷한 색 추천:</strong> 선택한 색상과 가장 유사한 대체 비즈를 자동으로 추천해 줍니다.</li>
+                        </ul>
+                    </div>
+                    <div style="background: var(--primary-light); padding: 20px; border-radius: 8px; margin-bottom: 30px; text-align: center;">
                         <p style="color: var(--primary-color); font-weight: 500;">
-                            💡 본 사이트는 로그인이 필요 없으며,<br>
-                            어떠한 개인 정보도 저장하지 않습니다.
+                            💡 본 사이트는 로그인이 필요 없으며, 개인 정보를 취합하지 않습니다.
                         </p>
                     </div>
-                    <p style="font-size: 0.9rem; color: #9ca3af;">
-                        문의: contact@dotloglite.com<br>
+                    <p style="font-size: 0.9rem; color: #9ca3af; text-align: center;">
                         version 1.0.0 (Lite Edition)
                     </p>
+                 </div>
+            `;
+        },
+
+        privacy: function () {
+            app.mainContent.innerHTML = `
+                 <div class="section-title">개인정보처리방침 (Privacy)</div>
+                 <div class="card" style="max-width: 800px; margin: 0 auto; padding: 40px; line-height: 1.6;">
+                    <p style="margin-bottom: 20px;">DotLog Lite는 사용자의 프라이버시를 중요하게 생각합니다. 본 사이트의 운영 및 데이터 처리 관련 사항은 다음과 같습니다.</p>
+                    
+                    <h3 style="margin-bottom: 10px; color: var(--primary-color);">Google Analytics (GA4) 사용</h3>
+                    <p style="margin-bottom: 20px;">
+                        본 서비스는 서비스 개선 및 트래픽 분석을 위해 Google Analytics 4를 사용합니다. 
+                        이 과정에서 익명화된 데이터(페이지 방문, 클릭 이벤트 등)가 수집될 수 있으나, 
+                        사용자를 특정할 수 있는 개인 정보는 수집하지 않습니다.
+                    </p>
+
+                    <h3 style="margin-bottom: 10px; color: var(--primary-color);">로컬 스토리지 (LocalStorage) 사용</h3>
+                    <p style="margin-bottom: 20px;">
+                        본 사이트는 사용자의 사이트 이용 편의성을 위해 브라우저의 로컬 스토리지 기능을 활용합니다.
+                        '찜', '보유', '구매 필요' 등의 비즈 상태 정보와 '비교함' 데이터 등은 사용자의 기기 내부에만 저장되며, 
+                        외부 서버로 전송되거나 저장되지 않습니다. 사용자가 브라우저 캐시 및 데이터를 삭제하면 해당 설정들도 모두 기기에서 초기화됩니다.
+                    </p>
+                 </div>
+            `;
+        },
+
+        contact: function () {
+            app.mainContent.innerHTML = `
+                 <div class="section-title">문의하기 (Contact)</div>
+                 <div class="card" style="max-width: 800px; margin: 0 auto; text-align: center; padding: 60px 40px; line-height: 1.6;">
+                    <h2 style="margin-bottom: 20px; color: var(--text-color);">무엇을 도와드릴까요?</h2>
+                    <p style="margin-bottom: 30px; color: var(--text-light);">
+                        사이트 이용 중 궁금한 점이 있거나, 추가되었으면 하는 기능, 혹은 오류를 발견하셨다면 언제든 아래 연락처로 문의해주세요.
+                    </p>
+                    <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; display: inline-block;">
+                        <a href="mailto:hello@dotlogapp.com" style="font-size: 1.2rem; font-weight: bold; color: var(--primary-color); text-decoration: underline;">
+                            hello@dotlogapp.com
+                        </a>
+                    </div>
                  </div>
             `;
         }
