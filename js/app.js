@@ -1132,7 +1132,7 @@ const app = {
                                 </div>
                             </div>
                             <div style="display:flex; justify-content: flex-end; gap:8px; align-items:center; margin-top:8px;">
-                                <a href="${sub.url}" target="_blank" class="shop-sub-btn shop-link" data-shop="${sub.name}">방문하기</a>
+                                <a href="${sub.url}" target="_blank" rel="noopener noreferrer" class="shop-sub-btn shop-link" data-shop="${sub.name.replace(/"/g, '&quot;')}">방문하기</a>
                                 ${app.isAdmin ? `
                                     <div class="admin-controls">
                                         <button class="admin-btn edit" onclick="app.editShopItem(${parentCatIdx}, ${parentItemIdx}, ${subIdx})">✏️</button>
@@ -1166,7 +1166,7 @@ const app = {
                                     ${shop.items.map(item => `
                                         <li class="shop-item">
                                             <span>${item.name}</span>
-                                            <a href="${item.url}" target="_blank" class="shop-btn shop-link" data-shop="${item.name}">방문하기</a>
+                                            <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="shop-btn shop-link" data-shop="${item.name.replace(/"/g, '&quot;')}">방문하기</a>
                                         </li>
                                     `).join('')}
                                 </ul>
@@ -1190,10 +1190,11 @@ const app = {
                                                     <div class="shop-expand-title-group">
                                                         <div class="shop-expand-name" style="font-size: 1.1rem; font-weight: 700;">🛍️ ${item.name}</div>
                                                     </div>
-                                                    <a href="${item.officialUrl}" target="_blank" class="shop-official-btn shop-link" data-shop="${item.name}">
+                                                    <a href="${item.officialUrl}" target="_blank" rel="noopener noreferrer" class="shop-official-btn shop-link" data-shop="${item.name.replace(/"/g, '&quot;')}">
                                                         <span class="shop-badge badge-official">🏠</span> 공식 홈페이지
                                                     </a>
                                                 </div>
+
                                                 
                                                 <div class="shop-toggle-area" onclick="app.toggleShopList('list-${item.id}', this)">
                                                     🔽 상세 상점 리스트 펼치기
