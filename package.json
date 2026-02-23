@@ -1,0 +1,8 @@
+{
+  "name": "dotlog-lite",
+  "version": "1.0.0",
+  "description": "DotLog Lite",
+  "scripts": {
+    "validate": "node scripts/validate-beads.mjs"
+  }
+}
