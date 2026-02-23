@@ -1327,8 +1327,8 @@ const app = {
                         사이트 이용 중 궁금한 점이 있거나, 추가되었으면 하는 기능, 혹은 오류를 발견하셨다면 언제든 아래 연락처로 문의해주세요.
                     </p>
                     <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; display: inline-block;">
-                        <a href="mailto:hello@dotlogapp.com" style="font-size: 1.2rem; font-weight: bold; color: var(--primary-color); text-decoration: underline;">
-                            hello@dotlogapp.com
+                        <a href="mailto:dotlogapp@gmail.com" style="font-size: 1.2rem; font-weight: bold; color: var(--primary-color); text-decoration: underline;">
+                            dotlogapp@gmail.com
                         </a>
                     </div>
                  </div>
