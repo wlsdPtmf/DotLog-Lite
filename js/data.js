@@ -425,7 +425,8 @@ const Data = {
                 { name: "킹드몬드", url: "https://kingdemond.com/" },
                 { name: "퀸즈아뜰리에", url: "https://queensatelier.com/" },
                 { name: "별밤공방", url: "https://starrynight89.com/" },
-                { name: `펜도라<br><span style="font-size: 0.85em; color: #9ca3af;">PENDORA</span>`, url: "https://smartstore.naver.com/yun325" }
+                { name: `펜도라<br><span style="font-size: 0.85em; color: #9ca3af;">PENDORA</span>`, url: "https://smartstore.naver.com/yun325" },
+                { name: "타오네 보석십자수", url: "https://smartstore.naver.com/dodomart0805" }
             ]
         },
         {
@@ -445,12 +446,12 @@ const Data = {
                 {
                     id: "temu",
                     name: `테무<br><span style="font-size: 0.85em; color: #9ca3af;">Temu</span>`,
-                    officialUrl: "https://www.temu.com/",
+                    officialUrl: "https://temu.to/k/qx5jdsu2rum",
                     shops: [
-                        { name: "TUOYU DP", desc: "테무 판매 3년 차! 캐릭터 도안 퀄리티가 가장 안정적인 상점. 비즈가 레진입니다.", url: "https://www.temu.com/", tag: "pattern" },
-                        { name: "wowo art", desc: "흔하지 않은 감성 도안이 많아요. 도안이 이쁜게 많아요 추천합니다. 비즈가 레진입니다.", url: "https://www.temu.com/", tag: "pattern" },
-                        { name: "cateared", desc: "트라브릭스 트레이가 있는 곳입니다. 장바구니에 담았다가 할인할 때 구매하세요!", url: "https://www.temu.com/", tag: "tool" },
-                        { name: "AZQSD", desc: "가성비 끝판왕! 비즈 보관함 저렴하게 구매할 수 있습니다!", url: "https://www.temu.com/", tag: "tool" }
+                        { name: "TUOYU DP", desc: "테무 판매 3년 차! 캐릭터 도안 퀄리티가 가장 안정적인 상점. 비즈가 레진입니다.", url: "https://temu.to/k/gr1zp4ygq4l", tag: "pattern" },
+                        { name: "wowo art", desc: "흔하지 않은 감성 도안이 많아요. 도안이 이쁜게 많아요 추천합니다. 비즈가 레진입니다.", url: "https://temu.to/k/g7q7wse344r", tag: "pattern" },
+                        { name: "cateared", desc: "트라브릭스 트레이가 있는 곳입니다. 장바구니에 담았다가 할인할 때 구매하세요!", url: "https://temu.to/k/gui0bfbgoc0", tag: "tool" },
+                        { name: "AZQSD", desc: "가성비 끝판왕! 비즈 보관함 저렴하게 구매할 수 있습니다!", url: "https://temu.to/k/g27yvmgs539", tag: "tool" }
                     ]
                 },
                 {
