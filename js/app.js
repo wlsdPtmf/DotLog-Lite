@@ -306,7 +306,7 @@ const app = {
         const toast = document.getElementById("toast");
         if (!toast) return;
 
-        toast.textContent = message;
+        toast.innerHTML = message;
         toast.className = "show";
 
         // After 3 seconds, remove the show class
@@ -553,6 +553,41 @@ const app = {
 
         // Shop Link Click Delegation
         document.body.addEventListener('click', (e) => {
+            // 1) 할인 코드 복사 버튼 클릭
+            const promoCopyBtn = e.target.closest('.temu-promo-copy');
+            if (promoCopyBtn) {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText('alc168786').then(() => {
+                        app.showToast("✅ 할인 코드가 복사되었습니다!");
+                    }).catch(err => {
+                        console.error('클립보드 복사 실패:', err);
+                        prompt("할인 코드 복사에 실패했습니다. 다음 코드를 복사해 주세요:", 'alc168786');
+                    });
+                } else {
+                    prompt("할인 코드 복사에 실패했습니다. 다음 코드를 복사해 주세요:", 'alc168786');
+                }
+                return;
+            }
+
+            // 2) 상점명 복사 버튼 클릭
+            const copyBtn = e.target.closest('button.temu-copy-btn');
+            if (copyBtn) {
+                const storeName = copyBtn.getAttribute('data-store-name');
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(storeName).then(() => {
+                        app.showToast("✅ 상점명이 복사되었습니다.<br><span style='font-size: 0.85em; opacity: 0.9;'>테무 검색창에 붙여넣어 주세요.</span>");
+                    }).catch(err => {
+                        console.error('클립보드 복사 실패:', err);
+                        prompt("상점 복사에 실패했습니다. 검색창에 다음 상점명을 입력해 주세요:", storeName);
+                    });
+                } else {
+                    prompt("상점 복사에 실패했습니다. 검색창에 다음 상점명을 입력해 주세요:", storeName);
+                }
+                // GA 추적 안 함
+                return;
+            }
+
+            // 3) 방문하기 클릭 (기존 추적 코드 + 새 탭)
             const link = e.target.closest('a.shop-link');
             if (link) {
                 let code = link.getAttribute('data-code');
@@ -566,7 +601,15 @@ const app = {
                 }
                 const shop = link.getAttribute('data-shop') || 'Unknown Shop';
                 const url = link.href;
-                app.track('shop_click', { code: code || '', shop, url });
+
+                // 테무 전용 메타데이터 병합
+                let params = { code: code || '', shop, url };
+                if (link.classList.contains('temu-link')) {
+                    params.platform = 'temu';
+                    params.placement = 'shop_page';
+                    params.store_name = shop;
+                }
+                app.track('shop_click', params);
             }
         });
     },
@@ -1112,7 +1155,7 @@ const app = {
             const expandableShops = Data.shops.filter(s => s.type === 'expandable');
 
             // Helper to render sub-items (reduces nesting complexity)
-            const renderSubList = (shops, parentCatIdx, parentItemIdx) => {
+            const renderSubList = (shops, parentCatIdx, parentItemIdx, parentId) => {
                 if (!shops || shops.length === 0) {
                     return '<li style="padding:20px; text-align:center; color:#9ca3af;">등록된 상점이 없습니다.</li>';
                 }
@@ -1120,19 +1163,31 @@ const app = {
                     const badgeClass = (sub.tag === 'tool') ? 'badge-tool' : 'badge-pattern';
                     const badgeIcon = (sub.tag === 'tool') ? '✒️' : '🎨';
 
+                    let actionButtonHTML = '';
+                    let storeNameHTML = `${sub.name}`;
+
+                    if (parentId === 'temu') {
+                        // 복사 버튼 (작고 깔끔하게)
+                        storeNameHTML += ` <button class="temu-copy-btn" data-store-name="${sub.name}" style="background: none; border: 1px solid #d1d5db; border-radius: 4px; padding: 2px 6px; font-size: 0.75rem; color: #4b5563; cursor: pointer; margin-left: 6px; vertical-align: middle;">📋 복사</button>`;
+                        // 방문하기 버튼 (기존 디자인 유지)
+                        actionButtonHTML = `<a href="${sub.url}" target="_blank" rel="noopener noreferrer" class="shop-sub-btn shop-link temu-link" data-shop="${sub.name.replace(/"/g, '&quot;')}">방문하기</a>`;
+                    } else {
+                        actionButtonHTML = `<a href="${sub.url}" target="_blank" rel="noopener noreferrer" class="shop-sub-btn shop-link" data-shop="${sub.name.replace(/"/g, '&quot;')}">방문하기</a>`;
+                    }
+
                     return `
                         <li class="shop-subitem">
                             <div class="shop-sub-header">
                                 <div class="shop-sub-name-wrap">
                                     <div class="shop-sub-name" style="display: flex; align-items: center;">
                                         <span class="shop-badge ${badgeClass}">${badgeIcon}</span>
-                                        ${sub.name}
+                                        ${storeNameHTML}
                                     </div>
                                     <div class="shop-sub-desc">${sub.desc || ''}</div>
                                 </div>
                             </div>
                             <div style="display:flex; justify-content: flex-end; gap:8px; align-items:center; margin-top:8px;">
-                                <a href="${sub.url}" target="_blank" rel="noopener noreferrer" class="shop-sub-btn shop-link" data-shop="${sub.name.replace(/"/g, '&quot;')}">방문하기</a>
+                                ${actionButtonHTML}
                                 ${app.isAdmin ? `
                                     <div class="admin-controls">
                                         <button class="admin-btn edit" onclick="app.editShopItem(${parentCatIdx}, ${parentItemIdx}, ${subIdx})">✏️</button>
@@ -1184,7 +1239,23 @@ const app = {
                                 <div class="shop-category-card full-width-card" style="margin-bottom: 24px;">
                                     <div class="shop-category-title">${shop.category}</div>
                                     <div class="shop-expand-grid">
-                                        ${shop.items.map((item, itemIdx) => `
+                                        ${shop.items.map((item, itemIdx) => {
+
+                    let extraPromoHTML = '';
+                    if (item.id === 'temu') {
+                        extraPromoHTML = `
+                                                    <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 12px;">
+                                                        <div style="font-size: 1.5rem; line-height: 1;">💡</div>
+                                                        <div>
+                                                            <div style="font-weight: 700; color: #111827; margin-bottom: 4px; font-size: 0.95rem;">닷로그 유저 전용 혜택</div>
+                                                            <div style="font-size: 0.9rem; color: #4b5563;">신규 가입 시 30% 할인 적용</div>
+                                                            <div style="margin-top: 6px; font-size: 0.85rem; background: #fff; display: inline-block; padding: 2px 8px; border-radius: 4px; border: 1px dashed #d1d5db; color: #374151;">코드: <strong class="temu-promo-copy" style="cursor: pointer; text-decoration: underline; color: var(--primary-color);" title="클릭하여 복사">alc168786</strong></div>
+                                                        </div>
+                                                    </div>
+                                                `;
+                    }
+
+                    return `
                                             <div class="shop-expand-card">
                                                 <div class="shop-expand-header">
                                                     <div class="shop-expand-title-group">
@@ -1200,11 +1271,14 @@ const app = {
                                                     🔽 상세 상점 리스트 펼치기
                                                 </div>
                                                 <ul id="list-${item.id}" class="shop-sublist">
-                                                    ${renderSubList(item.shops, originalCatIdx, itemIdx)}
+                                                    <div style="padding: 16px 24px 0 24px;">
+                                                        ${extraPromoHTML}
+                                                    </div>
+                                                    ${renderSubList(item.shops, originalCatIdx, itemIdx, item.id)}
                                                     ${app.isAdmin ? `<button class="admin-btn add" onclick="app.addShopItem(${originalCatIdx}, ${itemIdx})">+ 상점 추가하기</button>` : ''}
                                                 </ul>
                                             </div>
-                                        `).join('')}
+                                        `}).join('')}
                                     </div>
                                 </div>
                              `;
