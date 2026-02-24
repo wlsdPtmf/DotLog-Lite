@@ -457,8 +457,17 @@ const Data = {
                 {
                     id: "ali",
                     name: `알리익스프레스<br><span style="font-size: 0.85em; color: #9ca3af;">AliExpress</span>`,
-                    officialUrl: "https://www.aliexpress.com/",
-                    shops: []
+                    officialUrl: "https://s.click.aliexpress.com/e/_c4rrp2Ef",
+                    shops: [
+                        { name: "포에버영 (ForeverYoung)", desc: "도안, 트라이, 보관함, 비즈, 퍼티 등 없는게 없습니다!", url: "https://s.click.aliexpress.com/e/_c3PhxkSX", tag: "tool" },
+                        { name: "wowo art", desc: "테무에도 있는 wowo! 하지만 알리가 도안이 더 다양하고 많습니다.", url: "https://s.click.aliexpress.com/e/_c3PNFNGX", tag: "pattern" },
+                        { name: "Shine AB DP Store", desc: "제작 도안이 인기가 많습니다 비즈 퀄리티가 좋아요.", url: "https://s.click.aliexpress.com/e/_c40yWRAL", tag: "pattern" },
+                        { name: "CSOUY Official Store", desc: "랜덤 크리스탈 비즈가 인기가 많습니다.", url: "https://s.click.aliexpress.com/e/_c3ZWGBof", tag: "tool" },
+                        { name: "EmmLiAn Art Store", desc: "크리스탈 비즈와 FD비즈가 이쁩니다.", url: "https://s.click.aliexpress.com/e/_c3mBtuef", tag: "tool" },
+                        { name: "Ever Moment", desc: "제작 도안이 인기가 많습니다.", url: "https://s.click.aliexpress.com/e/_c3zsB6HV", tag: "pattern" },
+                        { name: "Ornasist Art Store", desc: "크리스탈 비즈와 FD비즈가 이쁩니다.", url: "https://s.click.aliexpress.com/e/_c30nnt35", tag: "tool" },
+                        { name: "WYZDP Official Store", desc: "크리스탈 비즈와 FD비즈가 이쁩니다.", url: "https://s.click.aliexpress.com/e/_c3DlqDT9", tag: "tool" }
+                    ]
                 },
                 {
                     id: "coupang",
